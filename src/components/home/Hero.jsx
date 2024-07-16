@@ -24,10 +24,10 @@ const HeroSection = () => {
                             src="https://beta-portal.idigbio.org/portal/img/idigbio_logo.png" alt="iDigBio Logo"
                             style={{height: "50px", marginRight: "10px"}}/></a>
                         <div className="space-x-4">
-                            <a href="#" className="text-white">Home</a>
-                            <a href="#" className="text-white">About</a>
-                            <a href="#" className="text-white">Contact</a>
-                            <a href="#" className="text-white">Login</a>
+                            <a href="#" className="text-white hover:text-idb-blue">Home</a>
+                            <a href="#" className="text-white hover:text-idb-green">About</a>
+                            <a href="#" className="text-white hover:text-idb-orange">Contact</a>
+                            <a href="#" className="text-white hover:text-idb-yellow">Login</a>
                         </div>
                     </div>
                 </nav>
