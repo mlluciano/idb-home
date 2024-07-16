@@ -2,8 +2,8 @@ import React from 'react';
 
 const Footer = () => {
     return (
-        <footer className="text-sm my-1">
-            <div className="flex center justify-center space-x-44 my-2 content-center" id="footer" style={{height: 'auto'}}>
+        <footer className="text-sm my-2 mx-2">
+            <div className="flex center justify-between my-2 content-center" id="footer" style={{height: 'auto'}}>
 
                 <ul id="logo-list" className="flex center h-[4rem]">
                     <li><a target="_blank" href="http://ufl.edu"><img alt="University of Florida logo"
