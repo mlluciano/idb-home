@@ -11,6 +11,7 @@
     "postinstall": "node scripts/namespace.cjs"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.51.1",
     "lucide-react": "^0.408.0",
     "postcss-cli": "^11.0.0",
     "postcss-prefixer": "^3.0.0",
