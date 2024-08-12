@@ -11,11 +11,6 @@ const Stats = () => {
     const {data: recordsetCount, isLoadingrs, errorrs} = useSummary('count/recordsets/?rsq={"data.ingest": true}')
     const {data: mediaCount, isLoadingm, errorm} = useSummary('count/media')
 
-    const {data: records, isLoadin, err} = useQuery({
-        queryKey: ['records'],
-        queryFn: () => apiClient.search(),
-    })
-    console.log(records)
 
     if (isLoading || isLoadingrs || isLoadingm) {
         return (

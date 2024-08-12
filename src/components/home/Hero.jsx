@@ -28,6 +28,7 @@ const HeroSection = () => {
                             <a href="#" className="text-white hover:text-idb-green">About</a>
                             <a href="#" className="text-white hover:text-idb-orange">Contact</a>
                             <a href="#" className="text-white hover:text-idb-yellow">Login</a>
+                            <a href="#" className="text-white hover:text-idb-yellow">Search</a>
                         </div>
                     </div>
                 </nav>

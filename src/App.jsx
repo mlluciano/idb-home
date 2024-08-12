@@ -1,6 +1,8 @@
 import HeroSection from "./components/home/Hero.jsx";
 import Stats from "./components/home/Stats.jsx";
 import Footer from "./components/home/Footer.jsx";
+import Chat from "./components/chat/Chat.jsx";
+
 import {
     useQuery,
     useMutation,
@@ -14,9 +16,10 @@ const App = () => {
     return (
         <div>
             <QueryClientProvider client={queryClient}>
-                <HeroSection />
+                {/* <HeroSection />
                 <Stats />
-                <Footer />
+                <Footer /> */}
+                <Chat />
             </QueryClientProvider>
         </div>
     )
