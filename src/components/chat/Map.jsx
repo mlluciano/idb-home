@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import IDBMap from '../../../lib/mapper';
-import * as helpers from '../../../lib/helpers';
-
+import IDBMap from './mapper';
+import queryBuilder from './querybuilder';
+import './leaflet.css'
 let map; // Declare map variable
 
 const Map = (props) => {
@@ -70,7 +70,7 @@ const Map = (props) => {
     }, [props.search, currentQuery]);
 
     return (
-        <div id="map-wrapper">
+        <div id="map-wrapper" >
             <div id="map"></div>
         </div>
     );

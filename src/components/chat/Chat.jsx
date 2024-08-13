@@ -1,6 +1,135 @@
 import React from 'react';
 import { Form, TextArea, Button, Icon } from 'semantic-ui-react';
+import Map from './Map';
+import './chat.css'
+import ReactMarkdown from "react-markdown"
 
+
+const markdownText = `
+# Welcome to Our FAQ
+
+## Frequently Asked Questions
+
+Here are some common questions and answers:
+
+- **What is Markdown?**
+  Markdown is a lightweight markup language with plain-text formatting syntax. It is often used to format readme files, for writing messages in online discussion forums, and to create rich text using a plain text editor.
+
+- *Why use Markdown?*
+  Markdown allows you to write using an easy-to-read, easy-to-write plain text format, which then converts to structurally valid HTML.
+
+### More Information
+
+For more details on Markdown syntax, check out [Markdown Guide](https://www.markdownguide.org).
+`;
+
+const searchGalax = {
+    filters: [
+        {
+            "name": "scientificname",
+            "type": "text",
+            "text": "galax urceolata",
+            "exists": false,
+            "missing": false,
+            "fuzzy": false
+        },
+        {
+            "name": "datecollected",
+            "type": "daterange",
+            "range": {
+                "gte": "",
+                "lte": ""
+            },
+            "exists": false,
+            "missing": false
+        },
+        {
+            "name": "country",
+            "type": "text",
+            "text": "",
+            "exists": false,
+            "missing": false,
+            "fuzzy": false
+        }
+    ],
+    fulltext:'',
+    image:false,
+    geopoint:false,
+    sorting: [
+        {name: 'genus', order: 'asc'},
+        {name: 'specificepithet', order: 'asc'},
+        {name: 'datecollected', order: 'asc'}
+    ],
+    from: 0,
+    size: 100,
+    mapping: {
+        type: "box",
+        bounds:{
+            top_left:{
+                lat: false,
+                lon: false
+            },
+            bottom_right: {
+                lat: false,
+                lon: false
+            }
+        }   
+    }
+}
+
+const search = {
+    filters: [
+        {
+            "name": "scientificname",
+            "type": "text",
+            "text": "ursus arctos",
+            "exists": false,
+            "missing": false,
+            "fuzzy": false
+        },
+        {
+            "name": "datecollected",
+            "type": "daterange",
+            "range": {
+                "gte": "",
+                "lte": ""
+            },
+            "exists": false,
+            "missing": false
+        },
+        {
+            "name": "country",
+            "type": "text",
+            "text": "",
+            "exists": false,
+            "missing": false,
+            "fuzzy": false
+        }
+    ],
+    fulltext:'',
+    image:false,
+    geopoint:false,
+    sorting: [
+        {name: 'genus', order: 'asc'},
+        {name: 'specificepithet', order: 'asc'},
+        {name: 'datecollected', order: 'asc'}
+    ],
+    from: 0,
+    size: 100,
+    mapping: {
+        type: "box",
+        bounds:{
+            top_left:{
+                lat: false,
+                lon: false
+            },
+            bottom_right: {
+                lat: false,
+                lon: false
+            }
+        }   
+    }
+}
 const chat = {
     user_id: 1,
     session_id: 22,
@@ -20,9 +149,10 @@ const chat = {
         {role: "user", message: "Are there Ursos Arctos in the United States?"},
         {role: "ai", message: "Yes, there are according to iDigBio data"},
         {role: "user", message: "Are there Ursos Arctos in the United States?"},
-        {role: "ai", message: "Yes, there are according to iDigBio data"},
-        {role: "user", message: "Are there Ursos Arctos in the United States?"},
-        {role: "ai", message: "---------END--------"},
+        {role: "ai", message: markdownText},
+        {role: "user", message: "idk"},
+        {role: "map", message: "Yes, according to iDigBio data Ursos Arctos lives in the United States. I will generate a map for you:"},
+        // {role: "ai", message: "---------END--------"},
     ]
 }
 
@@ -35,6 +165,9 @@ const Chat = () => {
             <img className='absolute top-0 left-0 m-2' src="https://portal.idigbio.org/portal/img/idigbio_logo.png" alt="iDigBio" border="0" id="logo"></img>
 
             <Messages chat={chat} />
+            {/* <div className = 'flex w-full bg-blue-500' style={{ height: '490px'}}>
+                <Map search={search} />
+            </div> */}
 
             <div id="sui" className='max-h-28 fixed bottom-10 flex item-center justify-center inset-x-0 bottom-0 bg-zinc-800 text-red text-center'>
                 {/* <div className='flex item-center justify'> */}
@@ -64,10 +197,18 @@ const Messages = ({chat}) => {
                         <div key={key} className='self-end inline-block text-white bg-green-500 w-2/5 p-5 m-2 rounded-lg'>
                             {message.message}
                         </div>
-                    ) : ( // role: "ai"
-                        <div key={key} className='self-start inline-block text-white w-full p-5 m-2 rounded-lg'>
-                            {message.message}
+                    ) : message.role ==="ai" ? ( // role: "ai"
+                        <div key={key} className='md-container self-start inline-block text-white w-full p-5 m-2 rounded-lg'>
+                            <ReactMarkdown>{message.message}</ReactMarkdown>
                         </div>
+                    ) : message.role ==="map" ? (
+                        <div className='self-start inline-block text-white w-full p-5 m-2 rounded-lg'>
+                            {message.message}
+                            <Map search={search} />
+                            {/* <Map search={searchGalax} /> */}
+                        </div>
+                    ) : (
+                        <div></div>
                     )
                 ))}
                 </div>

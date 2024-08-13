@@ -1,0 +1,96 @@
+.md-container h1 {
+    font-size: 2em; /* Larger size for main headings */
+    margin-top: 0.67em;
+    margin-bottom: 0.67em;
+    font-weight: bold;
+}
+
+.md-container h2 {
+    font-size: 1.5em;
+    margin-top: 0.83em;
+    margin-bottom: 0.83em;
+    font-weight: bold;
+}
+
+.md-container h3 {
+    font-size: 1.17em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    font-weight: bold;
+}
+
+.md-container h4 {
+    font-size: 1em;
+    margin-top: 1.33em;
+    margin-bottom: 1.33em;
+    font-weight: bold;
+}
+
+.md-container h5 {
+    font-size: 0.83em;
+    margin-top: 1.67em;
+    margin-bottom: 1.67em;
+    font-weight: bold;
+}
+
+.md-container h6 {
+    font-size: 0.67em;
+    margin-top: 2.33em;
+    margin-bottom: 2.33em;
+    font-weight: bold;
+}
+
+.md-container p {
+    font-size: 1em; /* Standard text size */
+    margin-top: 0em;
+    margin-bottom: 1em;
+}
+
+.md-container ul, .md-container ol {
+    padding-left: 40px;
+    margin-top: 0em;
+    margin-bottom: 1em;
+}
+
+.md-container li {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+.md-container blockquote {
+    margin: 1em 40px;
+    padding-left: 15px;
+    border-left: 5px solid #ccc; /* Typical styling for blockquotes */
+}
+
+.md-container code {
+    font-family: monospace;
+    background-color: #f4f4f4;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.md-container pre {
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 3px;
+    overflow: auto;
+}
+
+.md-container a {
+    color: #0366d6; /* Standard link color */
+    text-decoration: none;
+}
+
+.md-container a:hover {
+    text-decoration: underline;
+}
+
+.md-container strong {
+    font-weight: bold;
+}
+
+.md-container em {
+    font-style: italic;
+}
+
