@@ -122,7 +122,7 @@ class QueryBuilder {
       }
     });
 
-    const geobounds = {}; // collects geobounds field values
+    let geobounds = {}; // collects geobounds field values
     switch (search.mapping.type) {
       case 'box':
         _.each(search.mapping.bounds, (val, key) => {
@@ -240,7 +240,7 @@ class QueryBuilder {
       }
     });
 
-    const geobounds = {}; // collects geobounds field values
+    let geobounds = {}; // collects geobounds field values
 
     switch (search.mapping.type) {
       case 'box':

@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import { Form, TextArea, Button, Icon } from 'semantic-ui-react';
+import { Form, TextArea, Button, Icon, Accordion, AccordionTitle, AccordionContent} from 'semantic-ui-react';
 import Map from './Map';
 import './chat.css'
 import ReactMarkdown from "react-markdown"
 import parseQuery from './parsers';
+import { set } from 'lodash';
 
 const markdownText = `
 # Welcome to Our FAQ
@@ -466,9 +467,11 @@ const Chat = () => {
             type: "user_chat_message",
             value: currentInput
         }
+        setCurrentInput('')
         setMessages(prevMessages => [...prevMessages, user_message]);
         streamMessages(user_message)
       }
+
 
       
   
@@ -482,7 +485,7 @@ const Chat = () => {
 
             <div id="sui" className='max-h-28 fixed bottom-10 flex item-center justify-center inset-x-0 bottom-0 bg-zinc-800 text-red text-center'>
                     <Form className='flex w-2/5'>
-                        <TextArea onChange={(e) => setCurrentInput(e.target.value)} placeholder='Message iDigBio' className="flex text-white bg-zinc-700" rows={1} />
+                        <TextArea value={currentInput} onChange={(e) => setCurrentInput(e.target.value)} placeholder='Message iDigBio' className="flex text-white bg-zinc-700" rows={1} />
                     </Form>
                     <div>
                         <Button onClick={() => handleSubmit()} icon className='bg-zinc-500 ml-2 rounded-3xl'>
@@ -496,32 +499,74 @@ const Chat = () => {
 
 const Messages = ({chat, messages, currentMessage}) => {
     const [maps, setMaps] = useState([])
-
+    const [activeIndex, setActiveIndex] = useState()
     return (
         <div id="messages" className='flex flex-col justify-start items-center text-white w-full p-4 overflow-y-auto' style={{ height: contentHeight }}>
 
                 <div className='flex flex-col w-3/6'>
                 {messages.map((message, key) => (
                     message.type === "user_chat_message" ? (
-                        <div key={key} className='self-end inline-block text-white bg-green-500 w-2/5 p-5 m-2 rounded-lg'>
+                        <div key={key} className='self-end inline-block text-white bg-green-500 w-2/5 p-4 rounded-lg'>
                             {message.value}
                         </div>
                     ) : message.type ==="ai_text_message" ? ( // role: "ai"
-                        <div key={key} className='md-container self-start inline-block text-white w-full p-5 m-2 rounded-lg'>
-                            <ReactMarkdown>{message.value}</ReactMarkdown>
+                        <div key={key} className='md-container self-start inline-block text-white w-full p-4 rounded-lg'>
+                            <ReactMarkdown className='md-container'>{message.value}</ReactMarkdown>
                         </div>
                     ) : message.type ==="ai_map_message" ? (
-                        <div key={key} className='self-start inline-block text-white w-full p-5 m-2 rounded-lg'>
+                        <div key={key} className='self-start inline-block text-white w-full rounded-lg'>
                             <Map rq={message.value.rq} search={search} maps={maps} setMaps={setMaps} mapid={key} />
-                            <div key={key}></div>
+                            <div>{JSON.stringify(message.value.rq)}</div>
+                        </div>
+                    ) : message.type === "ai_processing_message" ? (
+                        <div>
+                            <Accordion>
+                                <AccordionTitle
+                                active={activeIndex === key}
+                                index={key}
+                                onClick={() => {
+                                        activeIndex === key ? setActiveIndex(-1) : setActiveIndex(key)
+                                    }}
+                                >
+                                    <div className='flex'>
+                                        <Icon name='dropdown' />
+                                        <div className='text-slate-400'>{message.value.summary}</div>
+                                    </div>
+                                </AccordionTitle>
+                                <AccordionContent
+                                active={activeIndex === key}
+                                >
+                                    <ReactMarkdown>{message.value.content}</ReactMarkdown>
+                                </AccordionContent>
+                            </Accordion>
                         </div>
                     ) : (
                         <div key={key}>{message.value}</div>
                     )
                 ))}
                 {currentMessage && 
-                    <div className='md-container self-start inline-block text-white w-full p-5 m-2 rounded-lg'>
-                            <ReactMarkdown>{currentMessage.value}</ReactMarkdown>
+                    <div id="sui" className='md-container self-start inline-block text-white w-full p-4 rounded-lg'>
+                        <Accordion>
+                                <AccordionTitle
+                                    active={activeIndex === 0}
+                                    index={0}
+                                    onClick={() => {
+                                        activeIndex === 0 ? setActiveIndex(-1) : setActiveIndex(0)
+                                    }}
+                                >   
+                                    <div className='flex'>
+                                        <Icon name='dropdown' />
+                                        <div className='text-slate-400'>Generating rq...</div>
+                                    </div>
+                                    
+                                </AccordionTitle>
+                                <AccordionContent 
+                                    active={activeIndex === 0}
+                                >
+                                    <p className='m-0 p-0'>rq</p>
+                                </AccordionContent>
+                        </Accordion>
+                            {/* <ReactMarkdown className='md-container'>{currentMessage.value}</ReactMarkdown> */}
                     </div>
                 }
                 
