@@ -528,7 +528,7 @@ export default function(elid, options){
         //if(self.currentQuery !== q){
            // self.currentQuery = q;
             self.currentQueryTime = time;
-            console.log(mapapi)
+            // console.log(mapapi)
             $.ajax("http://search.idigbio.org/v2/mapping",{
                 data: q,
                 success: function(resp){
@@ -536,7 +536,7 @@ export default function(elid, options){
                     //make sure last query run is the last one that renders
                     //as responses can be out of order
                     //mapCode = resp.shortCode;
-                    console.log(resp)
+                    // console.log(resp)
                     if(time>=self.currentQueryTime){
                         self.map.mapCode = resp.shortCode;
                         self.map.resp=resp;

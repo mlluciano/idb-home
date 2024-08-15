@@ -1261,7 +1261,7 @@
   #top {
     margin: 0px;
   }
-  #map {
+  [id^="map-"] {
     /* margin: 5px;
     margin-top: 0px;
     margin-left: 470px;
@@ -1437,7 +1437,7 @@
     #search-any {
       width: 93%;
     }
-    #map {
+    [id^="map-"] {
       margin: 20px;
       float: none;
       width: 90%;
