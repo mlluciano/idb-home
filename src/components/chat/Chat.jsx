@@ -546,7 +546,7 @@ const Messages = ({chat, messages, currentMessage}) => {
                 ))}
                 {currentMessage && 
                     <div id="sui" className='md-container self-start inline-block text-white w-full p-4 rounded-lg'>
-                        <Accordion>
+                        {/* <Accordion>
                                 <AccordionTitle
                                     active={activeIndex === 0}
                                     index={0}
@@ -565,8 +565,8 @@ const Messages = ({chat, messages, currentMessage}) => {
                                 >
                                     <p className='m-0 p-0'>rq</p>
                                 </AccordionContent>
-                        </Accordion>
-                            {/* <ReactMarkdown className='md-container'>{currentMessage.value}</ReactMarkdown> */}
+                        </Accordion> */}
+                            <ReactMarkdown className='md-container'>{currentMessage.value}</ReactMarkdown>
                     </div>
                 }
                 
