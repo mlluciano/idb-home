@@ -317,6 +317,7 @@ const Chat = () => {
               'Accept': 'application/json-stream',
             },
             body: JSON.stringify(message),
+            credentials: "include"
           });
       
           if (!response.ok) {
