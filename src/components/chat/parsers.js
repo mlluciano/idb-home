@@ -140,6 +140,7 @@ export const streamMessages = async (message) => {
                             }
                             break;
                         }
+                        break
                     }
                 }
             }

@@ -5,6 +5,7 @@ import './chat.css'
 import ReactMarkdown from "react-markdown"
 import parseQuery from './parsers';
 import { set } from 'lodash';
+
 // import {streamMessages} from './parsers'
 const markdownText = `
 # Welcome to Our FAQ
@@ -178,7 +179,7 @@ const Chat = () => {
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState({ type: '', value: '' });
     const [currentInput, setCurrentInput] = useState('')
-    console.log(messages)
+
     const streamMessages_OLD = async (message) => {
         try {
           const response = await fetch('http://sobami2.acis.ufl.edu:8080/chat', {
@@ -188,7 +189,6 @@ const Chat = () => {
               'Accept': 'application/json-stream',
             },
             body: JSON.stringify(message),
-            credentials: "include"
           });
       
           if (!response.ok) {
@@ -204,7 +204,7 @@ const Chat = () => {
           let valueBuffer = '';
       
           const processText = (text) => {
-            console.log('started')
+            
             buffer += text;
             let startIndex = 0;
       
@@ -223,7 +223,7 @@ const Chat = () => {
               if (currentType === null) {
                 const typeMatch = /"type"\s*:\s*"([^"]+)"/.exec(buffer.slice(startIndex));
                 if (typeMatch) {
-                    console.log(typeMatch)
+                    
                   currentType = typeMatch[1];
                   startIndex += typeMatch.index + typeMatch[0].length;
                   if (currentType === 'ai_text_message') {
@@ -234,17 +234,17 @@ const Chat = () => {
                     valueBuffer = ''
                   }
                 } else {
-                    console.log('no type match?')
+                    
                   break; // Wait for more data
                 }
               }
       
               if (isParsingValue) {
                 const valueStart = buffer.indexOf('"value"', startIndex);
-                // console.log('valueStart: ' + valueStart)
+                
                 if (valueStart !== -1) {
                   const valueContentStart = buffer.indexOf('"', valueStart + 7) + 1;
-                //   console.log(buffer[valueContentStart])
+                
                   let valueEnd = valueContentStart;
                   let inEscape = false;
                   while (valueEnd < buffer.length) {
@@ -263,12 +263,10 @@ const Chat = () => {
                   if (valueEnd < buffer.length) {
                     // We have a complete value
                     valueBuffer = buffer.slice(valueContentStart, valueEnd);
-                    console.log(valueBuffer)
-                    console.log("Complete value:", valueBuffer);
+                    
                     if (currentType && valueBuffer.trim()) {
                         
-                        // console.log('current type: ' + currentType)
-                        // console.log('valueBuffer: ' + valueBuffer.trim())
+                        
                         const newMessage = { type: currentType, value: valueBuffer }
                       setCurrentMessage({});
                       setMessages(prevMessages => [...prevMessages, newMessage]);
@@ -277,7 +275,6 @@ const Chat = () => {
                     isParsingValue = false;
                     valueBuffer = '';
                     startIndex = valueEnd + 1;
-                    // console.log('valueEnd + 1: ' + startIndex)
                   } else {
                     // Incomplete value, update current message and wait for more
                     
@@ -298,12 +295,10 @@ const Chat = () => {
                     const valueStart = buffer.indexOf('"value"', startIndex);
                     if (valueStart!==-1) {
                         const valueContentStart = buffer.indexOf('{', valueStart)
-                        console.log(buffer[valueStart])
-                        console.log(buffer[valueContentStart])
+                        
                         let objectEnd =  valueContentStart
                         let objectDepth = 1;
-                        console.log(objectEnd < buffer.length)
-                        console.log(objectEnd)
+                        
 
                         while (objectEnd < buffer.length && objectDepth > 0) {
                             if (buffer[objectEnd] === '{') {
@@ -316,7 +311,6 @@ const Chat = () => {
 
                         if (objectEnd < buffer.length) {
                             valueBuffer = buffer.slice(valueContentStart, objectEnd-1);
-                            console.log(JSON.parse(valueBuffer))
                             let newMessage = {
                                 type: currentType,
                                 value: JSON.parse(valueBuffer)
@@ -327,7 +321,6 @@ const Chat = () => {
                             currentType = null;
                         } else {
                             valueBuffer = buffer.slice(valueContentStart)
-                            console.log(valueBuffer)
                             break
                             
                         }
