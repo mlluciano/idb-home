@@ -5,7 +5,7 @@ import './chat.css'
 import ReactMarkdown from "react-markdown"
 import parseQuery from './parsers';
 import { set } from 'lodash';
-
+// import {streamMessages} from './parsers'
 const markdownText = `
 # Welcome to Our FAQ
 
@@ -178,137 +178,8 @@ const Chat = () => {
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState({ type: '', value: '' });
     const [currentInput, setCurrentInput] = useState('')
-
-    // const streamMessages = async (message) => {
-    //     try {
-    //     const response = await fetch('http://sobami2.acis.ufl.edu:8080/chat', {
-    //         method: 'POST', // or 'GET', depending on your API
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'Accept': 'application/json-stream',
-    //         },
-    //         body: JSON.stringify(message),
-    //         });
-    
-    //         if (!response.ok) {
-    //         throw new Error(`HTTP error! status: ${response.status}`);
-    //         }
-
-    //         const reader = response.body.getReader();
-    //         const decoder = new TextDecoder();
-    //         let buffer = '';
-    //         let isInArray = false;
-    //         let currentType = null;
-    //         let isParsingValue = false;
-    //         let valueBuffer = '';
-
-    //         const processText = (text) => {
-    //             buffer += text;
-    //             let startIndex = 0;
-
-    //             while (startIndex < buffer.length) {
-    //                 if (!isInArray && buffer[startIndex] === '[') {
-    //                 isInArray = true;
-    //                 startIndex++;
-    //                 continue;
-    //                 }
-
-    //                 if (!isInArray) {
-    //                 startIndex++;
-    //                 continue;
-    //                 }
-
-    //                 if (currentType === null) {
-    //                 const typeMatch = /"type"\s*:\s*"([^"]+)"/.exec(buffer.slice(startIndex));
-    //                 if (typeMatch) {
-    //                     currentType = typeMatch[1];
-    //                     console.log(currentType)
-    //                     startIndex += typeMatch.index + typeMatch[0].length;
-    //                     if (currentType === 'ai_text_message') {
-    //                     isParsingValue = true;
-    //                     }
-    //                 } else {
-    //                     break; // Wait for more data
-    //                 }
-    //                 }
-
-    //                 if (isParsingValue) {
-    //                 const valueStart = buffer.indexOf('"value"', startIndex);
-    //                 if (valueStart !== -1) {
-    //                     console.log(valueStart)
-    //                     const valueContentStart = buffer.indexOf('"', valueStart + 7) + 1;
-    //                     let valueEnd = valueContentStart;
-    //                     let inEscape = false;
-    //                     while (valueEnd < buffer.length) {
-    //                     if (buffer[valueEnd] === '"' && !inEscape) {
-    //                         break;
-    //                     }
-    //                     if (buffer[valueEnd] === '\\') {
-    //                         inEscape = !inEscape;
-    //                     } else {
-    //                         inEscape = false;
-    //                     }
-    //                     valueEnd++;
-    //                     }
-
-    //                     if (valueEnd < buffer.length) {
-    //                     // We have a complete value
-    //                     valueBuffer += buffer.slice(valueContentStart, valueEnd);
-    //                     console.log(valueBuffer)
-    //                     setCurrentMessage({ type: currentType, value: valueBuffer });
-    //                     setMessages(prevMessages => [...prevMessages, { type: currentType, value: valueBuffer }]);
-    //                     currentType = null;
-    //                     isParsingValue = false;
-    //                     valueBuffer = '';
-    //                     startIndex = valueEnd + 1;
-    //                     } else {
-    //                     // Incomplete value, update current message and wait for more
-    //                     const s = buffer.indexOf(valueBuffer, valueContentStart);
-    //                     console.log(s)
-    //                     valueBuffer += buffer.slice(s);
-    //                     // console.log(valueBuffer)
-    //                     setCurrentMessage({ type: currentType, value: valueBuffer });
-    //                     break;
-    //                     }
-    //                 } else {
-    //                     break; // Wait for more data
-    //                 }
-    //                 } else {
-    //                 // For non-ai_chat_message types, parse the entire object
-    //                 const objectEnd = buffer.indexOf('}', startIndex);
-    //                 if (objectEnd !== -1) {
-    //                     const objectString = buffer.slice(startIndex, objectEnd + 1);
-    //                     try {
-    //                     const messageObj = JSON.parse(objectString);
-    //                     setMessages(prevMessages => [...prevMessages, messageObj]);
-    //                     currentType = null;
-    //                     startIndex = objectEnd + 1;
-    //                     } catch (e) {
-    //                     // Incomplete object, wait for more data
-    //                     break;
-    //                     }
-    //                 } else {
-    //                     break; // Wait for more data
-    //                 }
-    //                 }
-    //             }
-
-    //             buffer = buffer.slice(startIndex);
-    //         };
-
-    //         while (true) {
-    //             const { done, value } = await reader.read();
-    //             if (done) break;
-    //             processText(decoder.decode(value, { stream: true }));
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching data:', error);
-    //     }
-    //   };
-    //   console.log(messages)
-    //   console.log(currentMessage)
-
-    const streamMessages = async (message) => {
+    console.log(messages)
+    const streamMessages_OLD = async (message) => {
         try {
           const response = await fetch('http://sobami2.acis.ufl.edu:8080/chat', {
             method: 'POST',
@@ -332,6 +203,7 @@ const Chat = () => {
           let valueBuffer = '';
       
           const processText = (text) => {
+            console.log('started')
             buffer += text;
             let startIndex = 0;
       
@@ -350,19 +222,18 @@ const Chat = () => {
               if (currentType === null) {
                 const typeMatch = /"type"\s*:\s*"([^"]+)"/.exec(buffer.slice(startIndex));
                 if (typeMatch) {
-                    // console.log(typeMatch)
+                    console.log(typeMatch)
                   currentType = typeMatch[1];
-                //   console.log("Found type:", currentType);
                   startIndex += typeMatch.index + typeMatch[0].length;
-                //   console.log(buffer[startIndex])
                   if (currentType === 'ai_text_message') {
                     isParsingValue = true;
                     valueBuffer = ''; // Reset valueBuffer for new message
-                  } else if (currentType=="ai_map_message") {
+                  } else if (currentType=="ai_map_message" || "ai_processing_message") {
                     isParsingValue=false
                     valueBuffer = ''
                   }
                 } else {
+                    console.log('no type match?')
                   break; // Wait for more data
                 }
               }
@@ -391,13 +262,15 @@ const Chat = () => {
                   if (valueEnd < buffer.length) {
                     // We have a complete value
                     valueBuffer = buffer.slice(valueContentStart, valueEnd);
+                    console.log(valueBuffer)
                     console.log("Complete value:", valueBuffer);
                     if (currentType && valueBuffer.trim()) {
+                        
                         // console.log('current type: ' + currentType)
                         // console.log('valueBuffer: ' + valueBuffer.trim())
                         const newMessage = { type: currentType, value: valueBuffer }
                       setCurrentMessage({});
-                      setMessages((prevMessages) => [...prevMessages, newMessage]);
+                      setMessages(prevMessages => [...prevMessages, newMessage]);
                     }
                     currentType = null;
                     isParsingValue = false;
@@ -419,32 +292,84 @@ const Chat = () => {
                   break; // Wait for more data
                 }
               } else {
-                // For non-ai_text_message types, parse the entire object
-                const objectEnd = buffer.indexOf('}', startIndex);
-                if (objectEnd !== -1) {
-                  const objectString = buffer.slice(startIndex+17, objectEnd+1);
-                //   console.log(objectString)
-                  try {
-                    const messageObj = JSON.parse(objectString);
-                    // console.log(messageObj)
-                    let new_message = {
-                        type: currentType,
-                        value: {
-                            rq: messageObj
+                
+                if (currentType==='ai_processing_message' || currentType==='ai_map_message') {
+                    const valueStart = buffer.indexOf('"value"', startIndex);
+                    if (valueStart!==-1) {
+                        const valueContentStart = buffer.indexOf('{', valueStart)
+                        console.log(buffer[valueStart])
+                        console.log(buffer[valueContentStart])
+                        let objectEnd =  valueContentStart
+                        let objectDepth = 1;
+                        console.log(objectEnd < buffer.length)
+                        console.log(objectEnd)
+
+                        while (objectEnd < buffer.length && objectDepth > 0) {
+                            if (buffer[objectEnd] === '{') {
+                                objectDepth++;
+                            } else if (buffer[objectEnd] === '}') {
+                                objectDepth--;
+                            }
+                            objectEnd++;
                         }
+
+                        if (objectEnd < buffer.length) {
+                            valueBuffer = buffer.slice(valueContentStart, objectEnd-1);
+                            console.log(JSON.parse(valueBuffer))
+                            let newMessage = {
+                                type: currentType,
+                                value: JSON.parse(valueBuffer)
+                            }
+                            setMessages(prevMessages => [...prevMessages, newMessage]);
+                            startIndex = objectEnd + 1;
+                            valueBuffer=''
+                            currentType = null;
+                        } else {
+                            valueBuffer = buffer.slice(valueContentStart)
+                            console.log(valueBuffer)
+                            break
+                            
+                        }
+                    } else {
+                        break;
                     }
-                    // if (messageObj.type && messageObj.value.trim()) {
-                      setMessages(prevMessages => [...prevMessages, new_message]);
-                    // }
-                    currentType = null;
-                    startIndex = objectEnd + 1;
-                  } catch (e) {
-                    // Incomplete object, wait for more data
-                    break;
-                  }
-                } else {
-                  break; // Wait for more data
+            
+                    
                 }
+
+                // else if (currentType==='ai_map_message') {
+                //     // For non-ai_text_message types, parse the entire object
+                // const objectEnd = buffer.indexOf('}', startIndex);
+                // console.log(buffer.slice(startIndex))
+                // console.log(objectEnd)
+                
+                // if (objectEnd !== -1) {
+                //   const objectString = buffer.slice(startIndex+17, objectEnd+1);
+                //   console.log(objectString)
+                //   try {
+                //     const messageObj = JSON.parse(objectString);
+                //     // console.log(messageObj)
+                //     let new_message = {
+                //         type: currentType,
+                //         value: {
+                //             rq: messageObj
+                //         }
+                //     }
+                //     // if (messageObj.type && messageObj.value.trim()) {
+                //       setMessages(prevMessages => [...prevMessages, new_message]);
+                //     // }
+                //     currentType = null;
+                //     startIndex = objectEnd + 1;
+                //   } catch (e) {
+                //     // Incomplete object, wait for more data
+                //     break;
+                //   }
+                // } else {
+                //   break; // Wait for more data
+                // }
+                // }
+
+                
               }
             }
       
@@ -460,6 +385,155 @@ const Chat = () => {
           console.error('Error fetching data:', error);
         }
       };
+
+    const streamMessages = async (message) => {
+        const response = await fetch('http://sobami2.acis.ufl.edu:8080/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json-stream',
+            },
+            body: JSON.stringify(message),
+            credentials: "include"
+        });
+    
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+        let isInArray = false;
+        let currentType = null;
+        let isParsingValue = false;
+        let valueBuffer = '';
+        let stack = []
+        let typeMatch
+    
+        const processText = (text) => {
+
+            buffer += text
+            let startIndex = 0;
+    
+            while (startIndex<buffer.length) {
+                if (!isInArray && buffer[startIndex] === '[') {
+                    isInArray = true;
+                    startIndex++;
+                    continue;
+                }
+    
+                if (!isInArray) {
+                    startIndex++;
+                    continue;
+                }
+    
+                if (currentType===null) {
+                    console.log(startIndex)
+                    typeMatch = /"type"\s*:\s*"([^"]+)"/.exec(buffer.slice(startIndex));
+                    
+                    if (typeMatch) {
+                        console.log(typeMatch)
+                        currentType = typeMatch[1];
+                        startIndex += typeMatch.index + typeMatch[0].length;
+                        valueBuffer=''
+                        isParsingValue = true
+                    } else {
+                        break
+                    }
+                }
+    
+                if (isParsingValue) {
+                    const valueStart = buffer.indexOf('"value"', startIndex);
+    
+                    if (valueStart!==-1) {
+                        let valueContentStart
+                        let valueEnd = -1
+                        let inEscape = false;
+    
+                        while (valueEnd<buffer.length) {
+                            if (typeMatch==='ai_text_message') {
+                                valueContentStart = buffer.indexOf('"', valueStart +7) + 1;
+                                valueEnd = valueContentStart
+                                while (valueEnd<buffer.length) {
+                                    if (buffer[valueEnd] === '"' && !inEscape) {
+                                        break;
+                                    }
+                                    if (buffer[valueEnd] === '\\') {
+                                        inEscape = !inEscape;
+                                    } else {
+                                        inEscape = false;
+                                    }
+                                    valueEnd++;
+                                }
+    
+                            } else if (typeMatch==='ai_processing_message' || 'ai_map_message') {
+                                valueContentStart = buffer.indexOf('{', valueStart + 7) + 1;
+                                valueEnd = valueContentStart
+                                stack.push('{')
+                            
+                                while (valueEnd<buffer.length) {
+
+                                    if (buffer[valueEnd]==='}' && !inEscape) {
+                                        if (stack.slice(-1)[0]=='{') {
+                                            if (stack.length===1) {
+                                                console.log('breaking')
+                                                break
+                                            } else {
+                                                stack.pop()
+                                            }
+                                        }
+    
+                                    }
+                                    if (buffer[valueEnd]==='{') {
+                                        stack.push('{')
+                                    }
+                                    if (buffer[valueEnd]==='\\') {
+                                        inEscape = !inEscape
+                                    }
+                                    else {
+                                        inEscape = false
+                                    }
+                                    valueEnd++
+                                }
+                                
+                            }
+    
+                        }
+    
+                        if (valueEnd<buffer.length) {
+                            console.log('broke out of while loop')
+                            // Complete Value
+                            valueBuffer = buffer.slice(valueContentStart, valueEnd);
+                            if (currentType && valueBuffer) {
+                                const newMessage = { type: currentType, value: valueBuffer }
+                                setCurrentMessage({});
+                                setMessages((prevMessages) => [...prevMessages, newMessage]);
+                            }
+                            currentType = null;
+                            isParsingValue = false;
+                            valueBuffer = '';
+                            startIndex = valueEnd + 1;
+                            stack = []
+                        } else {
+                            if (currentType==='ai_text_message') {
+                                
+                                valueBuffer = buffer.slice(valueContentStart);
+                                console.log(valueBuffer)
+                                if (currentType && valueBuffer.trim()) {
+                                    const newMessage = { type: currentType, value: valueBuffer }
+                                    setCurrentMessage(newMessage);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            buffer = buffer.slice(startIndex);
+        }
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            processText(decoder.decode(value, { stream: true }));
+        }
+    }
       
 
       const handleSubmit = () => {
@@ -469,13 +543,9 @@ const Chat = () => {
         }
         setCurrentInput('')
         setMessages(prevMessages => [...prevMessages, user_message]);
-        streamMessages(user_message)
+        streamMessages_OLD(user_message)
       }
 
-
-      
-  
-    
 
     return (
         <div className='flex item-center justify-center w-screen h-screen bg-zinc-800'>
@@ -500,6 +570,8 @@ const Chat = () => {
 const Messages = ({chat, messages, currentMessage}) => {
     const [maps, setMaps] = useState([])
     const [activeIndex, setActiveIndex] = useState()
+
+    
     return (
         <div id="messages" className='flex flex-col justify-start items-center text-white w-full p-4 overflow-y-auto' style={{ height: contentHeight }}>
 
@@ -519,7 +591,7 @@ const Messages = ({chat, messages, currentMessage}) => {
                             <div>{JSON.stringify(message.value.rq)}</div>
                         </div>
                     ) : message.type === "ai_processing_message" ? (
-                        <div>
+                        <div key={key} id='sui'>
                             <Accordion>
                                 <AccordionTitle
                                 active={activeIndex === key}
@@ -536,7 +608,7 @@ const Messages = ({chat, messages, currentMessage}) => {
                                 <AccordionContent
                                 active={activeIndex === key}
                                 >
-                                    <ReactMarkdown>{message.value.content}</ReactMarkdown>
+                                    <ReactMarkdown>{JSON.stringify(message.value.content)}</ReactMarkdown>
                                 </AccordionContent>
                             </Accordion>
                         </div>
@@ -546,7 +618,7 @@ const Messages = ({chat, messages, currentMessage}) => {
                 ))}
                 {currentMessage && 
                     <div id="sui" className='md-container self-start inline-block text-white w-full p-4 rounded-lg'>
-                        {/* <Accordion>
+                        {/* <Accordion> 
                                 <AccordionTitle
                                     active={activeIndex === 0}
                                     index={0}

@@ -14,6 +14,145 @@ function newFilterProps(term){
     }
 };
 
+export const streamMessages = async (message) => {
+    const response = await fetch('http://sobami2.acis.ufl.edu:8080/chat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json-stream',
+        },
+        body: JSON.stringify(message),
+        credentials: "include"
+    });
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let isInArray = false;
+    let currentType = null;
+    let isParsingValue = false;
+    let valueBuffer = '';
+    let stack = []
+    let typeMatch
+
+    const processText = (text) => {
+        buffer += text
+        let startIndex = 0;
+
+        while (startIndex<buffer.length) {
+            if (!isInArray && buffer[startIndex] === '[') {
+                isInArray = true;
+                startIndex++;
+                continue;
+            }
+
+            if (!isInArray) {
+                startIndex++;
+                continue;
+            }
+
+            if (currentType===null) {
+                typeMatch = /"type"\s*:\s*"([^"]+)"/.exec(buffer.slice(startIndex));
+                if (typeMatch) {
+                    console.log(typeMatch)
+                    currentType = typeMatch[1];
+                    startIndex += typeMatch.index + typeMatch[0].length;
+                    valueBuffer=''
+                    isParsingValue = true
+                } else {
+                    break
+                }
+            }
+
+            if (isParsingValue) {
+                const valueStart = buffer.indexOf('"value"', startIndex);
+
+                if (valueStart!==-1) {
+                    let valueContentStart
+                    let valueEnd = -1
+                    let inEscape = false;
+
+                    while (valueEnd<buffer.length) {
+                        if (typeMatch==='ai_text_message') {
+                            valueContentStart = buffer.indexOf('"', valueStart + 7) + 1;
+                            valueEnd = valueContentStart
+                            while (valueEnd<buffer.length) {
+                                if (buffer[valueEnd] === '"' && !inEscape) {
+                                    break;
+                                }
+                                if (buffer[valueEnd] === '\\') {
+                                    inEscape = !inEscape;
+                                } else {
+                                    inEscape = false;
+                                }
+                                valueEnd++;
+                            }
+
+                        } else if (typeMatch==='ai_processing_message' || 'ai_map_message') {
+                            valueContentStart = buffer.indexOf('{', valueStart + 7) + 1;
+                            valueEnd = valueContentStart
+                            while (valueEnd<buffer.length) {
+                                if (buffer[valueEnd]==='}' && !inEscape) {
+                                    if (stack.slice(-1)[0]=='{') {
+                                        if (stack.length===1) {
+                                            break
+                                        } else {
+                                            stack.pop()
+                                        }
+                                    }
+
+                                }
+                                if (buffer[valueEnd]==='{') {
+                                    stack.push('{')
+                                }
+                                if (buffer[valueEnd]==='\\') {
+                                    inEscape = !inEscape
+                                }
+                                else {
+                                    inEscape = false
+                                }
+                                valueEnd++
+                            }
+                        }
+
+
+                    }
+
+                    if (valueEnd<buffer.length) {
+                        // Complete Value
+                        valueBuffer = buffer.slice(valueContentStart, valueEnd);
+                        if (currentType && valueBuffer) {
+                            const newMessage = { type: currentType, value: valueBuffer }
+                            setCurrentMessage({});
+                            setMessages((prevMessages) => [...prevMessages, newMessage]);
+                        }
+                        currentType = null;
+                        isParsingValue = false;
+                        valueBuffer = '';
+                        startIndex = valueEnd + 1;
+                        stack = []
+                    } else {
+                        if (currentType==='ai_text_message') {
+                            valueBuffer = buffer.slice(valueContentStart);
+                            if (currentType && valueBuffer.trim()) {
+                                const newMessage = { type: currentType, value: valueBuffer }
+                                setCurrentMessage(newMessage);
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        buffer = buffer.slice(startIndex);
+    }
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        processText(decoder.decode(value, { stream: true }));
+    }
+}
+
 export default function parseQuery(search, query) {
     try{
         var rq = JSON.parse(query);
