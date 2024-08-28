@@ -94,3 +94,12 @@
     font-style: italic;
 }
 
+.md-container pre {
+    background-color: #3E3E42;
+
+}
+
+.md-container code {
+    background-color: #3E3E42;
+}
+
