@@ -5,6 +5,8 @@ import './chat.css'
 import ReactMarkdown from "react-markdown"
 import parseQuery from './parsers';
 import { set } from 'lodash';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 // import {streamMessages} from './parsers'
 const markdownText = `
@@ -75,7 +77,7 @@ const searchGalax = {
                 lat: false,
                 lon: false
             }
-        }   
+        }
     }
 }
 
@@ -129,7 +131,7 @@ const search = {
                 lat: false,
                 lon: false
             }
-        }   
+        }
     }
 }
 const chat = {
@@ -191,11 +193,11 @@ const Chat = () => {
             body: JSON.stringify(message),
             credentials: "include"
           });
-      
+
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }
-      
+
           const reader = response.body.getReader();
           const decoder = new TextDecoder();
           let buffer = '';
@@ -203,28 +205,28 @@ const Chat = () => {
           let currentType = null;
           let isParsingValue = false;
           let valueBuffer = '';
-      
+
           const processText = (text) => {
-            
+
             buffer += text;
             let startIndex = 0;
-      
+
             while (startIndex < buffer.length) {
               if (!isInArray && buffer[startIndex] === '[') {
                 isInArray = true;
                 startIndex++;
                 continue;
               }
-      
+
               if (!isInArray) {
                 startIndex++;
                 continue;
               }
-      
+
               if (currentType === null) {
                 const typeMatch = /"type"\s*:\s*"([^"]+)"/.exec(buffer.slice(startIndex));
                 if (typeMatch) {
-                    
+
                   currentType = typeMatch[1];
                   startIndex += typeMatch.index + typeMatch[0].length;
                   if (currentType === 'ai_text_message') {
@@ -235,17 +237,17 @@ const Chat = () => {
                     valueBuffer = ''
                   }
                 } else {
-                    
+
                   break; // Wait for more data
                 }
               }
-      
+
               if (isParsingValue) {
                 const valueStart = buffer.indexOf('"value"', startIndex);
-                
+
                 if (valueStart !== -1) {
                   const valueContentStart = buffer.indexOf('"', valueStart + 7) + 1;
-                
+
                   let valueEnd = valueContentStart;
                   let inEscape = false;
                   while (valueEnd < buffer.length) {
@@ -260,14 +262,14 @@ const Chat = () => {
                     valueEnd++;
                   }
                 //   console.log(valueEnd < buffer.length)
-      
+
                   if (valueEnd < buffer.length) {
                     // We have a complete value
                     valueBuffer = buffer.slice(valueContentStart, valueEnd);
-                    
+
                     if (currentType && valueBuffer.trim()) {
-                        
-                        
+
+
                         const newMessage = { type: currentType, value: valueBuffer }
                       setCurrentMessage({});
                       setMessages(prevMessages => [...prevMessages, newMessage]);
@@ -278,7 +280,7 @@ const Chat = () => {
                     startIndex = valueEnd + 1;
                   } else {
                     // Incomplete value, update current message and wait for more
-                    
+
                     valueBuffer = buffer.slice(valueContentStart);
                     // console.log('INCOMPLETE: ' + valueBuffer)
                     if (currentType && valueBuffer.trim()) {
@@ -291,15 +293,15 @@ const Chat = () => {
                   break; // Wait for more data
                 }
               } else {
-                
+
                 if (currentType==='ai_processing_message' || currentType==='ai_map_message') {
                     const valueStart = buffer.indexOf('"value"', startIndex);
                     if (valueStart!==-1) {
                         const valueContentStart = buffer.indexOf('{', valueStart)
-                        
+
                         let objectEnd =  valueContentStart
                         let objectDepth = 1;
-                        
+
 
                         while (objectEnd < buffer.length && objectDepth > 0) {
                             if (buffer[objectEnd] === '{') {
@@ -323,13 +325,13 @@ const Chat = () => {
                         } else {
                             valueBuffer = buffer.slice(valueContentStart)
                             break
-                            
+
                         }
                     } else {
                         break;
                     }
-            
-                    
+
+
                 }
 
                 // else if (currentType==='ai_map_message') {
@@ -337,7 +339,7 @@ const Chat = () => {
                 // const objectEnd = buffer.indexOf('}', startIndex);
                 // console.log(buffer.slice(startIndex))
                 // console.log(objectEnd)
-                
+
                 // if (objectEnd !== -1) {
                 //   const objectString = buffer.slice(startIndex+17, objectEnd+1);
                 //   console.log(objectString)
@@ -364,13 +366,13 @@ const Chat = () => {
                 // }
                 // }
 
-                
+
               }
             }
-      
+
             buffer = buffer.slice(startIndex);
           };
-      
+
           while (true) {
             const { done, value } = await reader.read();
             if (done) break;
@@ -391,7 +393,7 @@ const Chat = () => {
             body: JSON.stringify(message),
             credentials: "include"
         });
-    
+
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let buffer = '';
@@ -401,28 +403,28 @@ const Chat = () => {
         let valueBuffer = '';
         let stack = []
         let typeMatch
-    
+
         const processText = (text) => {
 
             buffer += text
             let startIndex = 0;
-    
+
             while (startIndex<buffer.length) {
                 if (!isInArray && buffer[startIndex] === '[') {
                     isInArray = true;
                     startIndex++;
                     continue;
                 }
-    
+
                 if (!isInArray) {
                     startIndex++;
                     continue;
                 }
-    
+
                 if (currentType===null) {
                     console.log(startIndex)
                     typeMatch = /"type"\s*:\s*"([^"]+)"/.exec(buffer.slice(startIndex));
-                    
+
                     if (typeMatch) {
                         console.log(typeMatch)
                         currentType = typeMatch[1];
@@ -433,15 +435,15 @@ const Chat = () => {
                         break
                     }
                 }
-    
+
                 if (isParsingValue) {
                     const valueStart = buffer.indexOf('"value"', startIndex);
-    
+
                     if (valueStart!==-1) {
                         let valueContentStart
                         let valueEnd = -1
                         let inEscape = false;
-    
+
                         while (valueEnd<buffer.length) {
                             if (typeMatch==='ai_text_message') {
                                 valueContentStart = buffer.indexOf('"', valueStart +7) + 1;
@@ -457,12 +459,12 @@ const Chat = () => {
                                     }
                                     valueEnd++;
                                 }
-    
+
                             } else if (typeMatch==='ai_processing_message' || 'ai_map_message') {
                                 valueContentStart = buffer.indexOf('{', valueStart + 7) + 1;
                                 valueEnd = valueContentStart
                                 stack.push('{')
-                            
+
                                 while (valueEnd<buffer.length) {
 
                                     if (buffer[valueEnd]==='}' && !inEscape) {
@@ -474,7 +476,7 @@ const Chat = () => {
                                                 stack.pop()
                                             }
                                         }
-    
+
                                     }
                                     if (buffer[valueEnd]==='{') {
                                         stack.push('{')
@@ -487,11 +489,11 @@ const Chat = () => {
                                     }
                                     valueEnd++
                                 }
-                                
+
                             }
-    
+
                         }
-    
+
                         if (valueEnd<buffer.length) {
                             console.log('broke out of while loop')
                             // Complete Value
@@ -508,7 +510,7 @@ const Chat = () => {
                             stack = []
                         } else {
                             if (currentType==='ai_text_message') {
-                                
+
                                 valueBuffer = buffer.slice(valueContentStart);
                                 console.log(valueBuffer)
                                 if (currentType && valueBuffer.trim()) {
@@ -529,7 +531,7 @@ const Chat = () => {
             processText(decoder.decode(value, { stream: true }));
         }
     }
-      
+
 
       const handleSubmit = () => {
         const user_message = {
@@ -566,7 +568,7 @@ const Messages = ({chat, messages, currentMessage}) => {
     const [maps, setMaps] = useState([])
     const [activeIndex, setActiveIndex] = useState()
 
-    
+
     return (
         <div id="messages" className='flex flex-col justify-start items-center text-white w-full p-4 overflow-y-auto' style={{ height: contentHeight }}>
 
@@ -600,10 +602,30 @@ const Messages = ({chat, messages, currentMessage}) => {
                                         <div className='text-slate-400'>{message.value.summary}</div>
                                     </div>
                                 </AccordionTitle>
-                                <AccordionContent
-                                active={activeIndex === key}
-                                >
-                                    <ReactMarkdown>{JSON.stringify(message.value.content)}</ReactMarkdown>
+                                <AccordionContent active={activeIndex === key}>
+                                    <ReactMarkdown
+                                        components={{
+                                            code({ node, inline, className, children, ...props }) {
+                                                const match = /language-(\w+)/.exec(className || '');
+                                                return !inline && match ? (
+                                                    <SyntaxHighlighter
+                                                        style={tomorrow}
+                                                        language={match[1]}
+                                                        PreTag="div"
+                                                        {...props}
+                                                    >
+                                                        {String(children).replace(/\n$/, '')}
+                                                    </SyntaxHighlighter>
+                                                ) : (
+                                                    <code className={className} {...props}>
+                                                        {children}
+                                                    </code>
+                                                );
+                                            },
+                                        }}
+                                    >
+                                        {message.value.content}
+                                    </ReactMarkdown>
                                 </AccordionContent>
                             </Accordion>
                         </div>
@@ -611,23 +633,23 @@ const Messages = ({chat, messages, currentMessage}) => {
                         <div key={key}>{message.value}</div>
                     )
                 ))}
-                {currentMessage && 
+                {currentMessage &&
                     <div id="sui" className='md-container self-start inline-block text-white w-full p-4 rounded-lg'>
-                        {/* <Accordion> 
+                        {/* <Accordion>
                                 <AccordionTitle
                                     active={activeIndex === 0}
                                     index={0}
                                     onClick={() => {
                                         activeIndex === 0 ? setActiveIndex(-1) : setActiveIndex(0)
                                     }}
-                                >   
+                                >
                                     <div className='flex'>
                                         <Icon name='dropdown' />
                                         <div className='text-slate-400'>Generating rq...</div>
                                     </div>
-                                    
+
                                 </AccordionTitle>
-                                <AccordionContent 
+                                <AccordionContent
                                     active={activeIndex === 0}
                                 >
                                     <p className='m-0 p-0'>rq</p>
@@ -636,7 +658,7 @@ const Messages = ({chat, messages, currentMessage}) => {
                             <ReactMarkdown className='md-container'>{currentMessage.value}</ReactMarkdown>
                     </div>
                 }
-                
+
                 </div>
 
             </div>
