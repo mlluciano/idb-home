@@ -538,6 +538,7 @@ const Chat = () => {
       }
 
       useEffect( () => {
+          document.title = "TDWG Demo";
           async function clear() {
               const clear_chat_on_server = {
                   type: "user_chat_message",
