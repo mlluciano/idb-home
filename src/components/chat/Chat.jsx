@@ -543,6 +543,30 @@ const Chat = () => {
         streamMessages_OLD(user_message)
       }
 
+      useEffect( () => {
+          async function clear() {
+              const clear_chat_on_server = {
+                  type: "user_chat_message",
+                  value: "clear"
+              }
+
+              const response = await fetch('http://sobami2.acis.ufl.edu:8080/chat', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Accept': 'application/json-stream',
+                  },
+                  body: JSON.stringify(clear_chat_on_server),
+                  credentials: "include"
+              });
+
+              if (!response.ok) {
+                  console.log(response.status)
+              }
+          }
+          clear()
+    }, [])
+
 
     return (
         <div className='flex item-center justify-center w-screen h-screen bg-zinc-800'>
