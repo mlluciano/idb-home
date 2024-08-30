@@ -618,7 +618,6 @@ const Messages = ({chat, messages, currentMessage}) => {
                     ) : message.type ==="ai_map_message" ? (
                         <div key={key} className='self-start inline-block text-white w-full rounded-lg'>
                             <Map rq={message.value.rq} search={search} maps={maps} setMaps={setMaps} mapid={key} />
-                            <div>{JSON.stringify(message.value.rq)}</div>
                         </div>
                     ) : message.type === "ai_processing_message" ? (
                         <div key={key} id='sui'>
