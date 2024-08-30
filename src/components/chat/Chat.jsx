@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { Form, TextArea, Button, Icon, Accordion, AccordionTitle, AccordionContent} from 'semantic-ui-react';
+import {Form, TextArea, Button, Icon, Accordion, AccordionTitle, AccordionContent, Container} from 'semantic-ui-react';
 import Map from './Map';
 import './chat.css'
 import ReactMarkdown from "react-markdown"
@@ -7,25 +7,12 @@ import parseQuery from './parsers';
 import { set } from 'lodash';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
-
+import Markdown from 'markdown-to-jsx';
 // import {streamMessages} from './parsers'
 const markdownText = `
-# Welcome to Our FAQ
-
-## Frequently Asked Questions
-
-Here are some common questions and answers:
-
-- **What is Markdown?**
-  Markdown is a lightweight markup language with plain-text formatting syntax. It is often used to format readme files, for writing messages in online discussion forums, and to create rich text using a plain text editor.
-
-- *Why use Markdown?*
-  Markdown allows you to write using an easy-to-read, easy-to-write plain text format, which then converts to structurally valid HTML.
-
-### More Information
-
-For more details on Markdown syntax, check out [Markdown Guide](https://www.markdownguide.org).
+Generated search parameters:\\njson\\n{\\n    \\"rq\\": {\\n        \\"scientificname\\": \\"Rattus rattus\\"\\n    }\\n}\\n\\n\\n[Retrieve records using the iDigBio records API](https://search.idigbio.org/v2/search/records?rq=%7B%22scientificname%22:%22Rattus%20rattus%22%7D)\\n\\n[View results in the iDigBio portal](https://portal.idigbio.org/portal/search?rq=%7B%22scientificname%22:%22Rattus%20rattus%22%7D)\\n\\nTotal number of matching records: 19080
 `;
+import remarkGfm from 'remark-gfm'
 
 const searchGalax = {
     filters: [
@@ -159,18 +146,25 @@ const chat = {
         // {role: "ai", message: "---------END--------"},
     ]
 }
-
+const unescapeString = (str) => {
+    return str
+        .replace(/\\n/g, '\n')
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, '\\');
+};
 const resp = [
     {
-        "type": "ai_chat_message",
-        "value": "Here is a map of occurrences for the genus Carex"
+        "type": "ai_text_message",
+        "value": "| Header 1 | Header 2 |\n" +
+            "|----------|----------|\n" +
+            "| Row 1, Column 1 | Row 1, Column 2 |\n" +
+            "| Row 2, Column 1 | Row 2, Column 2 |"
     },
     {
-        "type": "ai_map_message",
+        "type": "ai_processing_message",
         "value": {
-            "rq": {
-                "genus": "Carex"
-            }
+            "summary": "sum",
+            "content": markdownText
         }
     }
 ]
@@ -232,7 +226,7 @@ const Chat = () => {
                   if (currentType === 'ai_text_message') {
                     isParsingValue = true;
                     valueBuffer = ''; // Reset valueBuffer for new message
-                  } else if (currentType=="ai_map_message" || "ai_processing_message") {
+                  } else if (currentType==="ai_map_message" || "ai_processing_message") {
                     isParsingValue=false
                     valueBuffer = ''
                   }
@@ -608,12 +602,37 @@ const Messages = ({chat, messages, currentMessage}) => {
                 <div className='flex flex-col w-3/6'>
                 {messages.map((message, key) => (
                     message.type === "user_chat_message" ? (
-                        <div key={key} className='self-end inline-block text-white bg-green-500 w-2/5 p-4 rounded-lg'>
+                        <div key={key} className='self-end inline-block text-white bg-[#6AAA51] w-2/5 p-4 rounded-lg'>
                             {message.value}
                         </div>
                     ) : message.type ==="ai_text_message" ? ( // role: "ai"
-                        <div key={key} className='md-container self-start inline-block text-white w-full p-4 rounded-lg'>
-                            <ReactMarkdown className='md-container'>{message.value}</ReactMarkdown>
+                        <div key={key} id="sui" >
+                                <ReactMarkdown
+                                    className='dark-table'
+                                    remarkPlugins={[remarkGfm]}
+                                    components={{
+                                        code({ node, inline, className, children, ...props }) {
+                                            const match = /language-(\w+)/.exec(className || '');
+                                            return !inline && match ? (
+                                                <SyntaxHighlighter
+                                                    style={tomorrow}
+                                                    language={match[1]}
+                                                    PreTag="div"
+                                                    {...props}
+                                                >
+                                                    {children}
+                                                </SyntaxHighlighter>
+                                            ) : (
+                                                <code className={className} {...props}>
+                                                    {children}
+                                                </code>
+                                            );
+                                        },
+                                    }}
+                                >
+                                    {unescapeString(message.value)}
+                                </ReactMarkdown>
+
                         </div>
                     ) : message.type ==="ai_map_message" ? (
                         <div key={key} className='self-start inline-block text-white w-full rounded-lg'>
@@ -636,6 +655,7 @@ const Messages = ({chat, messages, currentMessage}) => {
                                 </AccordionTitle>
                                 <AccordionContent active={activeIndex === key}>
                                     <ReactMarkdown
+                                        remarkPlugins={[remarkGfm]}
                                         components={{
                                             code({ node, inline, className, children, ...props }) {
                                                 const match = /language-(\w+)/.exec(className || '');
@@ -656,7 +676,7 @@ const Messages = ({chat, messages, currentMessage}) => {
                                             },
                                         }}
                                     >
-                                        {message.value.content}
+                                        {unescapeString(message.value.content)}
                                     </ReactMarkdown>
                                 </AccordionContent>
                             </Accordion>
@@ -687,7 +707,30 @@ const Messages = ({chat, messages, currentMessage}) => {
                                     <p className='m-0 p-0'>rq</p>
                                 </AccordionContent>
                         </Accordion> */}
-                            <ReactMarkdown className='md-container'>{currentMessage.value}</ReactMarkdown>
+                        <ReactMarkdown
+                            components={{
+                                code({ node, inline, className, children, ...props }) {
+                                    const match = /language-(\w+)/.exec(className || '');
+                                    return !inline && match ? (
+                                        <SyntaxHighlighter
+                                            style={tomorrow}
+                                            language={match[1]}
+                                            PreTag="div"
+                                            {...props}
+                                        >
+                                            {String(children).replace(/\n$/, '')}
+                                        </SyntaxHighlighter>
+                                    ) : (
+                                        <code className={className} {...props}>
+                                            {children}
+                                        </code>
+                                    );
+                                },
+                            }}
+                        >
+                            {currentMessage.value}
+                        </ReactMarkdown>
+                            {/*<ReactMarkdown className='md-container'>{currentMessage.value}</ReactMarkdown>*/}
                     </div>
                 }
 
