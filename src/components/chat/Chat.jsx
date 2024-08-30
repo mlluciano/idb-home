@@ -576,7 +576,16 @@ const Chat = () => {
 
             <div id="sui" className='max-h-28 fixed bottom-10 flex item-center justify-center inset-x-0 bottom-0 bg-zinc-800 text-red text-center'>
                     <Form className='flex w-2/5'>
-                        <TextArea value={currentInput} onChange={(e) => setCurrentInput(e.target.value)} placeholder='Message iDigBio' className="flex text-white bg-zinc-700" rows={1} />
+                        <TextArea
+                            onKeyDown={(e) => {
+                                if (e.keyCode ===13 && !e.shiftKey) {
+                                    e.preventDefault()
+                                    handleSubmit()
+                            }}}
+                            value={currentInput} onChange={(e) => {
+
+                            setCurrentInput(e.target.value)
+                        }} placeholder='Message iDigBio' className="flex text-white bg-zinc-700" rows={1} />
                     </Form>
                     <div>
                         <Button onClick={() => handleSubmit()} icon className='bg-zinc-500 ml-2 rounded-3xl'>
