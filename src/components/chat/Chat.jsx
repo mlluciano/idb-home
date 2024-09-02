@@ -178,7 +178,7 @@ const Chat = () => {
 
     const streamMessages_OLD = async (message) => {
         try {
-          const response = await fetch('http://sobami2.acis.ufl.edu:8081/chat', {
+          const response = await fetch('http://sobami2.acis.ufl.edu/chat', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ const Chat = () => {
       };
 
     const streamMessages = async (message) => {
-        const response = await fetch('http://sobami2.acis.ufl.edu:8081/chat', {
+        const response = await fetch('http://sobami2.acis.ufl.edu/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -545,7 +545,7 @@ const Chat = () => {
                   value: "clear"
               }
 
-              const response = await fetch('http://sobami2.acis.ufl.edu:8081/chat', {
+              const response = await fetch('http://sobami2.acis.ufl.edu/chat', {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json',
