@@ -565,7 +565,8 @@ const Chat = () => {
 
     return (
         <div className='flex item-center justify-center w-screen h-screen bg-zinc-800'>
-            <img className='absolute top-0 left-0 m-2' src="https://portal.idigbio.org/portal/img/idigbio_logo.png" alt="iDigBio" border="0" id="logo"></img>
+                <img className='absolute top-0 left-0 m-2' src="https://portal.idigbio.org/portal/img/idigbio_logo.png" alt="iDigBio" border="0" id="logo"></img>
+                <div className='absolute text-red-500 flex item-center'>Alpha</div>
 
             <Messages chat={chat} messages={messages} currentMessage={currentMessage} />
 
@@ -600,7 +601,7 @@ const Messages = ({chat, messages, currentMessage}) => {
     return (
         <div id="messages" className='flex flex-col justify-start items-center text-white w-full p-4 overflow-y-auto' style={{ height: contentHeight }}>
 
-                <div className='flex flex-col w-3/6'>
+                <div className='flex flex-col w-3/6 gap-5'>
                 {messages.map((message, key) => (
                     message.type === "user_chat_message" ? (
                         <div key={key} className='self-end inline-block text-white bg-[#6AAA51] w-2/5 p-4 rounded-lg'>
