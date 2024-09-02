@@ -7,8 +7,8 @@
 *   drawControl: true|false
 *   legend: true|false
 *   scale: true|false
-*   queryChange: function that is passed an rq query object from the mapper. If this function is provided, 
-*      drawing boundaries and "set mapping bounds" links will call this function instead of running the 
+*   queryChange: function that is passed an rq query object from the mapper. If this function is provided,
+*      drawing boundaries and "set mapping bounds" links will call this function instead of running the
 *      query internally to update the map.  This is useful for when the map is bound to some external system
 *      like React or Backbone for instance and query changes flow from external changes to the mappers public "query" instance method.
 ***/
@@ -73,7 +73,7 @@ export default function(elid, options){
             return val.toString().replace(/,/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         }
     }
-    
+
     var MaximizeButton =  L.Control.extend({
         options: {
             position:"topright"
@@ -106,7 +106,7 @@ export default function(elid, options){
                     });
                     L.DomEvent.addListener(window, 'resize', resizeFunction);
                     $('#map-maximize-button.maximize-button').removeClass('maximize-button').addClass('minimize-button');
-                    control.expanded=true;   
+                    control.expanded=true;
 
                 }else{
                     L.DomEvent.stopPropagation(e);
@@ -116,7 +116,7 @@ export default function(elid, options){
                     map.invalidateSize();
                     //map.zoomOut();
                     $('#map-maximize-button.minimize-button').removeClass('minimize-button').addClass('maximize-button');
-                    control.expanded=false;                   
+                    control.expanded=false;
                 }
             }
         },
@@ -145,7 +145,7 @@ export default function(elid, options){
                 var legend = _.cloneDeep(map.legend);
                 if(isNaN(legend.order[0])){
                     legend.order.push('other');
-                    legend.colors['other']=legend.default;                
+                    legend.colors['other']=legend.default;
                 }
                 leafletImage(map,function(err,canvas){
                     //build white box
@@ -186,7 +186,7 @@ export default function(elid, options){
                     canvas.toBlob(function(blob){
                         FileSaver.saveAs(blob, "iDigBio_Map"+Date.now()+".png");
                         $('#map-image-button').removeClass('spinner').addClass('camera-icon');
-                    }); 
+                    });
                 });
             }
         },
@@ -207,7 +207,7 @@ export default function(elid, options){
         _div: L.DomUtil.create('div','map-legend'),
         onAdd: function(map){
             var colors,control=this,header,def='',time=self.currentQueryTime;
-           
+
             idbapi.mapping(map.mapCode+'/style/'+map.getZoom(),function(resp){
                 if(time >= self.currentQueryTime){
                     //control response
@@ -243,7 +243,7 @@ export default function(elid, options){
 
     /*
     * mapClick - builds scopped functions for popups.
-    * used to call Map API points endpoint with click detected by UTF8grid layer. 
+    * used to call Map API points endpoint with click detected by UTF8grid layer.
     ****/
 
     var mapClick = function(e){
@@ -256,9 +256,9 @@ export default function(elid, options){
             lat=e.latlng.lat;
             lon=e.latlng.lng;
         }
-        
+
         var nextPoints=false, prevPoints=false;
-        
+
         var navClick=function(e){
             var load=e.target.attributes['data-load'].value;
             if(load==='next' && typeof nextPoints === 'function'){
@@ -275,7 +275,7 @@ export default function(elid, options){
         var setClickFunction = function(data){
 
             var geopoint;
-            
+
             if(_.has(data,'bbox')){
                 geopoint = {
                     type: 'geo_bounding_box',
@@ -293,15 +293,15 @@ export default function(elid, options){
             }
 
             var query = _.cloneDeep(idbquery);
-            
+
             query.geopoint = geopoint;
 
             return function(e){
                 e.preventDefault();
                 internalQuery(query);
-            } 
+            }
         }
-        
+
         var setClick = _.noop;
 
         var makeContent = function(data,offset){
@@ -313,7 +313,7 @@ export default function(elid, options){
                 var title = helpers.filterFirst(
                     [dwc['dwc:scientificName'],n,'No Name']
                 )
-                
+
                 var inf = ['<b><span class="record-count">'+helpers.formatNum(ind+offset+1)+'</span><a class="record-link" target="'+item.uuid+'" href="/portal/records/'+item.uuid+'">View Record</a></b>'];
                 _.each(['genus','specificepithet','scientificname','country','stateprovince','lat','lon','institutioncode','collectioncode','catalognumber','datecollected'],function(term){
                     if(_.has(dwc,fields.byTerm[term].dataterm)){
@@ -323,7 +323,7 @@ export default function(elid, options){
                     }
                 });
                 var row = '<tr class="map-popup-item"><td><div class="cont clearfix">'
-                
+
                 row+=inf.join('<br/>')+'</div></td></tr>';
                 items.push(row);
             });
@@ -345,7 +345,7 @@ export default function(elid, options){
         var getPoints = function(offset,callback){
 
             $.getJSON(idbapi.host+"mapping/" + self.map.mapCode + "/points?lat=" + lat + "&lon=" + lon + "&zoom=" + self.map.getZoom()+"&offset="+offset, function(data){
-               
+
                 setClick = setClickFunction(data);
 
                 if(data.itemCount > data.items.length+offset){
@@ -356,7 +356,7 @@ export default function(elid, options){
                                 off = data.itemCount-100;
                             }else{
                                 off = Math.floor(data.itemCount / 100)*100;
-                            }        
+                            }
                         }
                         getPoints(off,function(d){
                             $('.nav-left, .nav-right').off('click',navClick);
@@ -389,7 +389,7 @@ export default function(elid, options){
                 }
                 callback(data);
             });
-        }        
+        }
         getPoints(0, function(data){
             var cont;
             if(data.itemCount>0){
@@ -414,7 +414,7 @@ export default function(elid, options){
     var hover;
 
     var mapHover = function(e){
-        if(_.has(e,'data') && _.has(e.data,'lat')){ 
+        if(_.has(e,'data') && _.has(e.data,'lat')){
             //provide offset degree additive for fake world coords.
             var ad=Math.floor(Math.trunc(e.latlng.lng/180))*360;
             circle.setLatLng([e.data.lat,e.data.lon+ad]);
@@ -436,7 +436,7 @@ export default function(elid, options){
     * iDBLayer and UTF8Grid interactions control and rendering with events
     ****/
     var idblayer,utf8grid;
-    
+
     var idbloading = function(){
         self.map.fire('dataloading');
     }
@@ -508,14 +508,14 @@ export default function(elid, options){
         }else{
             this.map.setView([0,0],2);
         }
-        
+
     }
 
     var internalQuery = function(query){
         if(_.isFunction(options.queryChange)){
             options.queryChange(query);
         }else{
-            self.query(query); 
+            self.query(query);
         }
     }
 
@@ -529,7 +529,7 @@ export default function(elid, options){
            // self.currentQuery = q;
             self.currentQueryTime = time;
             // console.log(mapapi)
-            $.ajax("http://search.idigbio.org/v2/mapping",{
+            $.ajax("https://search.idigbio.org/v2/mapping",{
                 data: q,
                 success: function(resp){
                     //console.log(resp.shortCode)
@@ -562,13 +562,13 @@ export default function(elid, options){
                 contentType: 'application/json',
                 type: 'POST',
                 crossDomain: true
-            }); 
+            });
         //}
-        
+
 
     }, 500,{'leading': false, 'trailing': true});
 
-    /* 
+    /*
     * Init MAP, Options and Event Handlers
     ****/
     var base = new L.TileLayer('//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -597,7 +597,7 @@ export default function(elid, options){
     if(options.maximizeControl){
         this.map.addControl(new MaximizeButton());
         //add mapper modal for maximize view
-        $('body').append('<div id="mapper-modal"></div>');        
+        $('body').append('<div id="mapper-modal"></div>');
     }
 
     if(options.fullScreenControl){
@@ -625,7 +625,7 @@ export default function(elid, options){
     if(options.scale){
         this.map.addControl(new L.control.scale({
             position:'bottomright'
-        }));        
+        }));
     }
 
     if(options.drawControl){
@@ -646,14 +646,14 @@ export default function(elid, options){
             utf8grid.off('click',mapClick);
             //removeUtflayer()
             //utf8grid.clearAllEventListeners();
-        });  
+        });
         this.map.on('draw:drawstop', function(e,f){
             if(drew===false){
                 utf8grid.on('click',mapClick);
             }
             //if drew = true the utf8grid will be reinitialized by the query command
             //as this event comes after draw:created (though I'm not sure this is guaranteed :))
-        }); 
+        });
         this.map.on('draw:created', function(e){
             //L.DomEvent.stop(e);
             drew=true;
@@ -663,14 +663,14 @@ export default function(elid, options){
                 case 'rectangle':
                     geopoint={
                         type: 'geo_bounding_box',
-                        top_left: { 
+                        top_left: {
                             lat: e.layer._latlngs[0][1].lat,
                             lon: e.layer._latlngs[0][1].lng
                         },
                         bottom_right: {
                             lat: e.layer._latlngs[0][3].lat,
                             lon: e.layer._latlngs[0][3].lng
-                        } 
+                        }
                     };
                     break;
                 case 'circle':
@@ -693,7 +693,7 @@ export default function(elid, options){
             separate: true
         });
         this.map.addControl(loading);
-    }    
+    }
     /*
     * Map Events Actions
     ***/
