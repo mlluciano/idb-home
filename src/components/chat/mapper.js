@@ -40,15 +40,15 @@ export default function(elid, options){
     * Basic Options
     ****/
     var optionsDefaults = {
-        imageButton: true,
+        // imageButton: true,
         maximizeControl: false,
-        drawControl: true,
+        // drawControl: true,
         legend: true,
         scale: true,
         queryChange: false,
-        loadingControl: true,
+        // loadingControl: true,
         zoomControl: true,
-        fullScreenControl: true
+        // fullScreenControl: true
     }
     if(typeof options == 'object'){
         _.defaults(options,optionsDefaults);
