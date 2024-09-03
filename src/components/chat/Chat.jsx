@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Form, TextArea, Button, Icon, Accordion, AccordionTitle, AccordionContent, Container} from 'semantic-ui-react';
 import Map from './Map';
 import './chat.css'
@@ -175,6 +175,8 @@ const Chat = () => {
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState({ type: '', value: '' });
     const [currentInput, setCurrentInput] = useState('')
+
+
 
     const streamMessages_OLD = async (message) => {
         try {
@@ -597,14 +599,22 @@ const Messages = ({chat, messages, currentMessage}) => {
     const [maps, setMaps] = useState([])
     const [activeIndex, setActiveIndex] = useState()
 
+    const divRef = useRef(null);
+
+    useEffect(() => {
+        if (divRef.current) {
+            divRef.current.scrollTop = divRef.current.scrollHeight;
+        }
+    }, [currentMessage, messages]);
+
 
     return (
-        <div id="messages" className='flex flex-col justify-start items-center text-white w-full p-4 overflow-y-auto' style={{ height: contentHeight }}>
+        <div ref={divRef} id="messages" className='flex flex-col justify-start items-center text-white w-full p-4 overflow-y-auto' style={{ height: contentHeight }}>
 
                 <div className='flex flex-col w-3/6 gap-5'>
                 {messages.map((message, key) => (
                     message.type === "user_chat_message" ? (
-                        <div key={key} className='self-end inline-block text-white bg-[#6AAA51] w-2/5 p-4 rounded-lg'>
+                        <div key={key} className='self-end inline-block text-white bg-[#6AAA51] w-2/5 p-3 rounded-lg'>
                             {message.value}
                         </div>
                     ) : message.type ==="ai_text_message" ? ( // role: "ai"
