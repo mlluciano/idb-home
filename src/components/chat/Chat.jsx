@@ -651,7 +651,7 @@ const Messages = ({chat, messages, currentMessage}) => {
                             <Map rq={message.value.rq} search={search} maps={maps} setMaps={setMaps} mapid={key} />
                         </div>
                     ) : message.type === "ai_processing_message" ? (
-                        <div key={key} id='sui'>
+                        <div key={key} id='sui' className='self-start inline-block text-white w-full rounded-lg'>
                             <Accordion>
                                 <AccordionTitle
                                 active={activeIndex === key}
@@ -665,7 +665,7 @@ const Messages = ({chat, messages, currentMessage}) => {
                                         <div className='text-slate-400'>{message.value.summary}</div>
                                     </div>
                                 </AccordionTitle>
-                                <AccordionContent active={activeIndex === key}>
+                                <AccordionContent active={activeIndex === key} className='bg-black p-4'>
                                     <ReactMarkdown
                                         remarkPlugins={[remarkGfm]}
                                         components={{
