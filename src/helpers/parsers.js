@@ -1,4 +1,4 @@
-import fields from "./fields";
+import fields from "../components/chat/fields";
 
 function newFilterProps(term){
     const type = fields.byTerm[term].type;
@@ -13,6 +13,176 @@ function newFilterProps(term){
             return null;
     }
 };
+
+export const unescapeString = (str) => {
+    return str
+        .replace(/\\n/g, '\n')
+        .replace(/\\"/g, '"')
+        .replace(/\\\\/g, '\\');
+};
+
+export const streamMessages_OLD = async (message, setMessages, setCurrentMessage) => {
+    try {
+      const response = await fetch('https://chat.idigbio.org/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json-stream',
+        },
+        body: JSON.stringify(message),
+        credentials: "include"
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let isInArray = false;
+      let currentType = null;
+      let isParsingValue = false;
+      let valueBuffer = '';
+
+      const processText = (text) => {
+
+        buffer += text;
+        let startIndex = 0;
+
+        while (startIndex < buffer.length) {
+          if (!isInArray && buffer[startIndex] === '[') {
+            isInArray = true;
+            startIndex++;
+            continue;
+          }
+
+          if (!isInArray) {
+            startIndex++;
+            continue;
+          }
+
+          if (currentType === null) {
+            const typeMatch = /"type"\s*:\s*"([^"]+)"/.exec(buffer.slice(startIndex));
+            if (typeMatch) {
+
+              currentType = typeMatch[1];
+              startIndex += typeMatch.index + typeMatch[0].length;
+              if (currentType === 'ai_text_message') {
+                isParsingValue = true;
+                valueBuffer = ''; // Reset valueBuffer for new message
+              } else if (currentType==="ai_map_message" || "ai_processing_message") {
+                isParsingValue=false
+                valueBuffer = ''
+              }
+            } else {
+
+              break; // Wait for more data
+            }
+          }
+
+          if (isParsingValue) {
+            const valueStart = buffer.indexOf('"value"', startIndex);
+
+            if (valueStart !== -1) {
+              const valueContentStart = buffer.indexOf('"', valueStart + 7) + 1;
+
+              let valueEnd = valueContentStart;
+              let inEscape = false;
+              while (valueEnd < buffer.length) {
+                if (buffer[valueEnd] === '"' && !inEscape) {
+                  break;
+                }
+                if (buffer[valueEnd] === '\\') {
+                  inEscape = !inEscape;
+                } else {
+                  inEscape = false;
+                }
+                valueEnd++;
+              }
+            //   console.log(valueEnd < buffer.length)
+
+              if (valueEnd < buffer.length) {
+                // We have a complete value
+                valueBuffer = buffer.slice(valueContentStart, valueEnd);
+
+                if (currentType && valueBuffer.trim()) {
+
+
+                    const newMessage = { type: currentType, value: valueBuffer }
+                  setCurrentMessage({});
+                  setMessages(prevMessages => [...prevMessages, newMessage]);
+                }
+                currentType = null;
+                isParsingValue = false;
+                valueBuffer = '';
+                startIndex = valueEnd + 1;
+              } else {
+                // Incomplete value, update current message and wait for more
+
+                valueBuffer = buffer.slice(valueContentStart);
+                // console.log('INCOMPLETE: ' + valueBuffer)
+                if (currentType && valueBuffer.trim()) {
+                    const newMessage = { type: currentType, value: valueBuffer }
+                  setCurrentMessage(newMessage);
+                }
+                break;
+              }
+            } else {
+              break; // Wait for more data
+            }
+          } else {
+
+            if (currentType==='ai_processing_message' || currentType==='ai_map_message') {
+                const valueStart = buffer.indexOf('"value"', startIndex);
+                if (valueStart!==-1) {
+                    const valueContentStart = buffer.indexOf('{', valueStart)
+
+                    let objectEnd =  valueContentStart
+                    let objectDepth = 1;
+
+
+                    while (objectEnd < buffer.length && objectDepth > 0) {
+                        if (buffer[objectEnd] === '{') {
+                            objectDepth++;
+                        } else if (buffer[objectEnd] === '}') {
+                            objectDepth--;
+                        }
+                        objectEnd++;
+                    }
+
+                    if (objectEnd < buffer.length) {
+                        valueBuffer = buffer.slice(valueContentStart, objectEnd-1);
+                        let newMessage = {
+                            type: currentType,
+                            value: JSON.parse(valueBuffer)
+                        }
+                        setMessages(prevMessages => [...prevMessages, newMessage]);
+                        startIndex = objectEnd + 1;
+                        valueBuffer=''
+                        currentType = null;
+                    } else {
+                        valueBuffer = buffer.slice(valueContentStart)
+                        break
+                    }
+                } else {
+                    break;
+                }
+            }
+          }
+        }
+        buffer = buffer.slice(startIndex);
+      };
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        processText(decoder.decode(value, { stream: true }));
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
 export const streamMessages = async (message) => {
     const response = await fetch('http://sobami2.acis.ufl.edu:8080/chat', {

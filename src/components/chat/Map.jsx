@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import IDBMap from './mapper';
 import queryBuilder from './querybuilder';
 import './leaflet.css'
-import parseQuery from './parsers';
+import parseQuery from '../../helpers/parsers';
 
 let map; // Declare map variable
 const searchDefaults = {
