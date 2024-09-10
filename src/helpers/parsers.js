@@ -18,7 +18,8 @@ export const unescapeString = (str) => {
     return str
         .replace(/\\n/g, '\n')
         .replace(/\\"/g, '"')
-        .replace(/\\\\/g, '\\');
+        .replace(/\\\\/g, '\\')
+        .replace(/\\ud83d\\ude0a/g, '😊');
 };
 
 export const streamMessages_OLD = async (message, setMessages, setCurrentMessage) => {
