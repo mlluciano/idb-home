@@ -9,6 +9,7 @@ import {streamMessages_OLD} from '../../helpers/parsers'
 import {initialSearch as search} from '../../helpers/constants'
 import remarkGfm from 'remark-gfm'
 import { unescapeString } from '../../helpers/parsers';
+import Artifact from "./Artifact.jsx";
 
 const footerHeight = 140
 const contentHeight = `calc(100vh - ${footerHeight}px)`;
@@ -17,8 +18,12 @@ const Chat = () => {
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState({ type: '', value: '' });
     const [currentInput, setCurrentInput] = useState('')
+    const [openChat, setOpenChat] = useState(false)
 
       const handleSubmit = () => {
+        if (!openChat) {
+            setOpenChat(true)
+        }
         const user_message = {
             type: "user_chat_message",
             value: currentInput
@@ -36,7 +41,7 @@ const Chat = () => {
                   value: "clear"
               }
 
-              const response = await fetch('https://chat.idigbio.org/chat', {
+              const response = await fetch('http://localhost:8080/chat', {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json',
@@ -55,36 +60,36 @@ const Chat = () => {
 
 
     return (
-        <div className='flex item-center justify-center w-screen h-screen bg-zinc-800'>
-                <img className='absolute top-0 left-0 m-2' src="https://portal.idigbio.org/portal/img/idigbio_logo.png" alt="iDigBio" border="0" id="logo"></img>
-                <div className='absolute text-red-500 flex item-center'>Alpha</div>
+        <div className='flex flex-col flex-1 w-full bg-zinc-800 min-h-screen'>
 
-            <Messages messages={messages} currentMessage={currentMessage} />
-
-            <div id="sui" className='max-h-28 fixed bottom-10 flex item-center justify-center inset-x-0 bottom-0 bg-zinc-800 text-red text-center'>
-                    <Form className='flex w-2/5'>
-                        <TextArea
-                            onKeyDown={(e) => {
-                                if (e.keyCode ===13 && !e.shiftKey) {
-                                    e.preventDefault()
-                                    handleSubmit()
-                            }}}
-                            value={currentInput} onChange={(e) => {
-
-                            setCurrentInput(e.target.value)
-                        }} placeholder='Message iDigBio' className="flex text-white bg-zinc-700" rows={1} />
-                    </Form>
-                    <div>
-                        <Button onClick={() => handleSubmit()} icon className='bg-zinc-500 ml-2 rounded-3xl'>
-                            <Icon size='large' className='w-full h-full p-0 m-0' name="arrow circle up" />
-                        </Button>
-                    </div>
+            <div className='flex w-full max-w-full'>
+                <img className='top-0 left-0' src="https://portal.idigbio.org/portal/img/idigbio_logo.png" alt="iDigBio" border="0" id="logo"></img>
+                <div className='flex text-red-500 absolute left-1/2'>Alpha</div>
             </div>
+
+            <div className='flex flex-1 justify-center items-start gap-20 mt-5'>
+
+                <div className="flex w-2/5 justify-center ml-20">
+                    {openChat
+                        ? <Messages messages={messages} currentMessage={currentMessage} currentInput={currentInput}
+                                              setCurrentInput={setCurrentInput} handleSubmit={handleSubmit}/>
+                        : <Home currentInput={currentInput} setCurrentInput={setCurrentInput} handleSubmit={handleSubmit} />
+                    }
+                </div>
+                {openChat &&
+                    <div className='flex flex-1 mr-0'>
+                        <Artifact/>
+                    </div>
+                }
+            </div>
+
+
         </div>
+
     )
 }
 
-const Messages = ({messages, currentMessage}) => {
+const Messages = ({messages, currentMessage, currentInput, setCurrentInput, handleSubmit}) => {
     const [maps, setMaps] = useState([])
     const [activeIndex, setActiveIndex] = useState()
 
@@ -98,59 +103,59 @@ const Messages = ({messages, currentMessage}) => {
 
 
     return (
-        <div ref={divRef} id="messages" className='flex flex-col justify-start items-center text-white w-full p-4 overflow-y-auto' style={{ height: contentHeight }}>
+        <div ref={divRef} id="messages" className='relative flex flex-col flex-1 justify-start items-center text-white w-full'>
 
-                <div className='flex flex-col w-3/6 gap-5'>
+            <div className='flex flex-col flex-1 w-full gap-5 bg-zinc-700 border-zinc-600 border p-5 rounded border-box'>
                 {messages.map((message, key) => (
                     message.type === "user_chat_message" ? (
                         <div key={key} className='self-end inline-block text-white bg-[#6AAA51] w-2/5 p-3 rounded-lg'>
                             {message.value}
                         </div>
-                    ) : message.type ==="ai_text_message" ? ( // role: "ai"
-                        <div key={key} id="sui" >
-                                <ReactMarkdown
-                                    className='dark-table'
-                                    remarkPlugins={[remarkGfm]}
-                                    components={{
-                                        code({ node, inline, className, children, ...props }) {
-                                            const match = /language-(\w+)/.exec(className || '');
-                                            return !inline && match ? (
-                                                <SyntaxHighlighter
-                                                    style={tomorrow}
-                                                    language={match[1]}
-                                                    PreTag="div"
-                                                    {...props}
-                                                >
-                                                    {children}
-                                                </SyntaxHighlighter>
-                                            ) : (
-                                                <code className={className} {...props}>
-                                                    {children}
-                                                </code>
-                                            );
-                                        },
-                                    }}
-                                >
-                                    {unescapeString(message.value)}
-                                </ReactMarkdown>
+                    ) : message.type === "ai_text_message" ? ( // role: "ai"
+                        <div key={key} id="sui">
+                            <ReactMarkdown
+                                className='dark-table'
+                                remarkPlugins={[remarkGfm]}
+                                components={{
+                                    code({node, inline, className, children, ...props}) {
+                                        const match = /language-(\w+)/.exec(className || '');
+                                        return !inline && match ? (
+                                            <SyntaxHighlighter
+                                                style={tomorrow}
+                                                language={match[1]}
+                                                PreTag="div"
+                                                {...props}
+                                            >
+                                                {children}
+                                            </SyntaxHighlighter>
+                                        ) : (
+                                            <code className={className} {...props}>
+                                                {children}
+                                            </code>
+                                        );
+                                    },
+                                }}
+                            >
+                                {unescapeString(message.value)}
+                            </ReactMarkdown>
 
                         </div>
-                    ) : message.type ==="ai_map_message" ? (
+                    ) : message.type === "ai_map_message" ? (
                         <div key={key} className='self-start inline-block text-white w-full rounded-lg'>
-                            <Map rq={message.value.rq} search={search} maps={maps} setMaps={setMaps} mapid={key} />
+                            <Map rq={message.value.rq} search={search} maps={maps} setMaps={setMaps} mapid={key}/>
                         </div>
                     ) : message.type === "ai_processing_message" ? (
                         <div key={key} id='sui' className='self-start inline-block text-white w-full rounded-lg'>
                             <Accordion>
                                 <AccordionTitle
-                                active={activeIndex === key}
-                                index={key}
-                                onClick={() => {
+                                    active={activeIndex === key}
+                                    index={key}
+                                    onClick={() => {
                                         activeIndex === key ? setActiveIndex(-1) : setActiveIndex(key)
                                     }}
                                 >
                                     <div className='flex'>
-                                        <Icon name='dropdown' />
+                                        <Icon name='dropdown'/>
                                         <div className='text-slate-400'>{message.value.summary}</div>
                                     </div>
                                 </AccordionTitle>
@@ -158,7 +163,7 @@ const Messages = ({messages, currentMessage}) => {
                                     <ReactMarkdown
                                         remarkPlugins={[remarkGfm]}
                                         components={{
-                                            code({ node, inline, className, children, ...props }) {
+                                            code({node, inline, className, children, ...props}) {
                                                 const match = /language-(\w+)/.exec(className || '');
                                                 return !inline && match ? (
                                                     <SyntaxHighlighter
@@ -210,7 +215,7 @@ const Messages = ({messages, currentMessage}) => {
                         </Accordion> */}
                         <ReactMarkdown
                             components={{
-                                code({ node, inline, className, children, ...props }) {
+                                code({node, inline, className, children, ...props}) {
                                     const match = /language-(\w+)/.exec(className || '');
                                     return !inline && match ? (
                                         <SyntaxHighlighter
@@ -231,14 +236,57 @@ const Messages = ({messages, currentMessage}) => {
                         >
                             {currentMessage.value}
                         </ReactMarkdown>
-                            {/*<ReactMarkdown className='md-container'>{currentMessage.value}</ReactMarkdown>*/}
+                        {/*<ReactMarkdown className='md-container'>{currentMessage.value}</ReactMarkdown>*/}
                     </div>
                 }
 
+                <div id='sui' className='flex'>
+                    <Form className='flex w-full justify-center'>
+                        <TextArea
+                            onKeyDown={(e) => {
+                                if (e.keyCode === 13 && !e.shiftKey) {
+                                    e.preventDefault()
+                                    handleSubmit()
+                                }
+                            }}
+                            value={currentInput} onChange={(e) => {
+
+                            setCurrentInput(e.target.value)
+                        }} placeholder='Message iDigBio' className="flex justify-center text-white bg-zinc-700 border rounded-lg border-zinc-500" rows={1}/>
+                    </Form>
                 </div>
 
             </div>
+
+
+        </div>
     )
 }
+
+const Home = ({currentInput, setCurrentInput, handleSubmit}) => {
+
+    return (
+        <div className='flex justify-center w-full'>
+            <div id='sui' className='flex w-1/2 justify-center max-w-screen-md'>
+                <Form className='flex w-full'>
+                    <TextArea
+                        onKeyDown={(e) => {
+                            if (e.keyCode === 13 && !e.shiftKey) {
+                                e.preventDefault()
+                                handleSubmit()
+                            }
+                        }}
+                        value={currentInput} onChange={(e) => {
+
+                        setCurrentInput(e.target.value)
+                    }} placeholder='How can I help you today?'
+                        className="flex text-white bg-zinc-700 border rounded-lg border-zinc-600" rows={1}/>
+                </Form>
+            </div>
+        </div>
+    )
+}
+
+
 
 export default Chat;
