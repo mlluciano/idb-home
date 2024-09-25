@@ -1,5 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Form, TextArea, Button, Icon, Accordion, AccordionTitle, AccordionContent, Container} from 'semantic-ui-react';
+import {
+    Form,
+    TextArea,
+    Icon,
+    Accordion,
+    AccordionTitle,
+    AccordionContent,
+    Header,
+} from 'semantic-ui-react';
 import Map from './Map';
 import './chat.css'
 import ReactMarkdown from "react-markdown"
@@ -19,6 +27,7 @@ const Chat = () => {
     const [currentMessage, setCurrentMessage] = useState({ type: '', value: '' });
     const [currentInput, setCurrentInput] = useState('')
     const [openChat, setOpenChat] = useState(false)
+    const [maps, setMaps] = useState([])
 
       const handleSubmit = () => {
         if (!openChat) {
@@ -58,16 +67,28 @@ const Chat = () => {
           clear()
     }, [])
 
+    useEffect(() => {
+        let m = []
+        for (let i=0; i<messages.length; i++) {
+            if (messages[i].type==='ai_map_message') {
+                m.push({
+                    rq: messages[i].value.rq,
+                })
+            }
+        }
+        setMaps(m)
+    }, [messages]);
+
 
     return (
         <div className='flex flex-col flex-1 w-full bg-zinc-800 min-h-screen'>
 
             <div className='flex w-full max-w-full'>
-                <img className='top-0 left-0' src="https://portal.idigbio.org/portal/img/idigbio_logo.png" alt="iDigBio" border="0" id="logo"></img>
+                <img className='fixed top-0 left-0' src="src/components/chat/idb_simple_logo.png" alt="iDigBio" border="0" id="logo" style={{width: '75px', height: '75px'}}></img>
                 <div className='flex text-red-500 absolute left-1/2'>Alpha</div>
             </div>
 
-            <div className='flex flex-1 justify-center items-start gap-20 mt-5'>
+            <div className='flex flex-1 justify-center items-start gap-20 mt-20'>
 
                 <div className="flex w-2/5 justify-center ml-20">
                     {openChat
@@ -77,12 +98,11 @@ const Chat = () => {
                     }
                 </div>
                 {openChat &&
-                    <div className='flex flex-1 mr-0'>
-                        <Artifact/>
+                    <div className='flex flex-1 mr-0 overflow-x-hidden h-full '>
+                        <Artifact messages={messages} maps={maps} />
                     </div>
                 }
             </div>
-
 
         </div>
 
@@ -140,11 +160,7 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
                             </ReactMarkdown>
 
                         </div>
-                    ) : message.type === "ai_map_message" ? (
-                        <div key={key} className='self-start inline-block text-white w-full rounded-lg'>
-                            <Map rq={message.value.rq} search={search} maps={maps} setMaps={setMaps} mapid={key}/>
-                        </div>
-                    ) : message.type === "ai_processing_message" ? (
+                    )  : message.type === "ai_processing_message" ? (
                         <div key={key} id='sui' className='self-start inline-block text-white w-full rounded-lg'>
                             <Accordion>
                                 <AccordionTitle
@@ -188,31 +204,11 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
                             </Accordion>
                         </div>
                     ) : (
-                        <div key={key}>{message.value}</div>
+                        <div key={key}></div>
                     )
                 ))}
                 {currentMessage &&
                     <div id="sui" className='md-container self-start inline-block text-white w-full p-4 rounded-lg'>
-                        {/* <Accordion>
-                                <AccordionTitle
-                                    active={activeIndex === 0}
-                                    index={0}
-                                    onClick={() => {
-                                        activeIndex === 0 ? setActiveIndex(-1) : setActiveIndex(0)
-                                    }}
-                                >
-                                    <div className='flex'>
-                                        <Icon name='dropdown' />
-                                        <div className='text-slate-400'>Generating rq...</div>
-                                    </div>
-
-                                </AccordionTitle>
-                                <AccordionContent
-                                    active={activeIndex === 0}
-                                >
-                                    <p className='m-0 p-0'>rq</p>
-                                </AccordionContent>
-                        </Accordion> */}
                         <ReactMarkdown
                             components={{
                                 code({node, inline, className, children, ...props}) {
@@ -266,7 +262,8 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
 const Home = ({currentInput, setCurrentInput, handleSubmit}) => {
 
     return (
-        <div className='flex justify-center w-full'>
+        <div id='sui' className='flex flex-col justify-center items-center w-full'>
+            <Header as='h1' className='text-zinc-200'>Good afternoon, Researcher</Header>
             <div id='sui' className='flex w-1/2 justify-center max-w-screen-md'>
                 <Form className='flex w-full'>
                     <TextArea
@@ -280,7 +277,7 @@ const Home = ({currentInput, setCurrentInput, handleSubmit}) => {
 
                         setCurrentInput(e.target.value)
                     }} placeholder='How can I help you today?'
-                        className="flex text-white bg-zinc-700 border rounded-lg border-zinc-600" rows={1}/>
+                        className="flex text-white bg-zinc-700 border rounded-lg border-zinc-600 mt-5" rows={1} style={{height: '100px'}}/>
                 </Form>
             </div>
         </div>

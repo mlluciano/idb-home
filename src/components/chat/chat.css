@@ -130,3 +130,80 @@
     background-color: #3a3a3a;
 }
 
+#sui .ui.tabular.menu .active.item {
+    background: none rgb(40, 44, 52);
+    color: rgba(0, 0, 0, .95);
+    border-top-width: 1px;
+    font-weight: 700;
+    margin-bottom: -1px;
+    box-shadow: none;
+    border-radius: .28571429rem .28571429rem 0 0 !important;
+    border-color: rgb(82 82 91);
+}
+.ui.tabular.menu {
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    flex-wrap: nowrap !important;
+    display: flex !important;
+    max-width: inherit;
+}
+
+.ui.menu.scrolling-menu {
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    flex-wrap: nowrap !important;
+    display: flex !important;
+    max-width: inherit;
+}
+
+/* Prevent the items from stretching or shrinking */
+.ui.menu.scrolling-menu .item {
+    flex: 0 0 0 !important;
+    max-width: inherit;
+}
+
+#sui .ui.attached.tabular.menu {
+   border-bottom-color: rgb(82 82 91);
+}
+
+#sui .ui.secondary.pointing.menu .active.item {
+    color: whitesmoke;
+    border-right: 1px solid rgb(82 82 91);
+}
+
+#sui .ui.secondary.pointing.menu .item {
+    color: rgb(82 82 91);
+    border-right: 1px solid rgb(82 82 91);
+}
+
+#sui .ui.secondary.pointing.menu {
+    border: 1px solid rgb(82 82 91);
+    border-radius: 5px;
+    position: relative;
+}
+
+.horizontal-scroll-container .tab-menu {
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .horizontal-scroll-container .tab-menu::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+  
+  .horizontal-scroll-container {
+    position: relative;
+  }
+  
+  .horizontal-scroll-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 1px;
+    right: 1px;
+    height: 2px;
+    background: linear-gradient(to right, #6AAA51 var(--scroll), rgb(82 82 91) var(--scroll));
+  }
+

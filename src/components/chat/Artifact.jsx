@@ -1,14 +1,83 @@
+import React, {useEffect, useState, useRef} from 'react';
+import { Tab, TabPane } from 'semantic-ui-react';
+import './chat.css';
+import Map from "./Map.jsx";
+import {initialSearch as search} from "../../helpers/constants.js";
+
+const Artifact = ({messages, maps, setMaps}) => {
+    const [panes, setPanes] = useState([]);
+    const [mps, setMps] = useState([]);
+    const tabRef = useRef(null);
 
 
-const Artifact = () => {
+    useEffect(() => {function updateScrollIndicator() {
+        const container = document.querySelector('.horizontal-scroll-container');
+        if (container) {
+          const tabMenu = container.querySelector('.tab-menu');
+          const scrollPercentage = (tabMenu.scrollLeft / (tabMenu.scrollWidth - tabMenu.clientWidth)) * 100;
+          container.style.setProperty('--scroll', `${scrollPercentage}%`);
+        }
+      }
+      
+      // Add event listeners
+      document.querySelector('.tab-menu')?.addEventListener('scroll', updateScrollIndicator);
+      window.addEventListener('resize', updateScrollIndicator);
+      
+      // Call initially
+      updateScrollIndicator();
+        const handleWheel = (e) => {
+          const tabMenu = tabRef.current.querySelector('.tab-menu');
+          if (tabMenu) {
+            e.preventDefault();
+            tabMenu.scrollLeft += e.deltaY;
+          }
+        };
+    
+        const tabMenu = tabRef.current.querySelector('.tab-menu');
+        if (tabMenu) {
+          tabMenu.addEventListener('wheel', handleWheel, { passive: false });
+        }
+    
+        return () => {
+          if (tabMenu) {
+            tabMenu.removeEventListener('wheel', handleWheel);
+          }
+        };
+      }, []);
+
+    useEffect(() => {
+        let p = messages
+            .filter(message => message.type === 'ai_map_message')
+            .map((message, index) => ({
+                menuItem: JSON.stringify(message.value.rq),
+                render: () => (
+                    <TabPane as='div' key={index} className='flex flex-col' style={{backgroundColor: 'rgb(40, 44, 52)', borderColor: 'rgb(82 82 91)', border: '1px solid rgb(82 82 91)', borderRadius: '5px'}}>
+                        <div className='text-white p-4'>{JSON.stringify(message.value.rq)}</div>
+                        <Map rq={message.value.rq} search={search} maps={mps} setMaps={setMps} mapid={index}/>
+                    </TabPane>
+                )
+            }));
+        setPanes(p);
+    }, [messages]);
+
     return (
-        <div className="fixed p-20 border-zinc-600 border rounded-lg bg-zinc-700">
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-
-
+        <div id="sui" className="fixed flex w-full flex-col border-zinc-600 rounded-lg h-fit min-h-3/5" style={{maxWidth: '50vw', maxHeight: '80vh'}}>
+            <div ref={tabRef} className="flex flex-1 horizontal-scroll-container w-full">
+                <Tab
+                    menu={{
+                        fluid: true,
+                        secondary: true,
+                        pointing: true,
+                        className: 'tab-menu'
+                    }}
+                    panes={panes}
+                    renderActiveOnly={true}
+                    style={{display: 'flex', flex: '1', flexDirection: 'column', overflowX: 'hidden', position: 'relative'}}
+                    className='tab-component'
+                />
+            </div>
         </div>
-    )
+    );
 }
 
-export default Artifact
+export default Artifact;
