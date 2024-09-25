@@ -1,10 +1,10 @@
 import React, {useEffect, useState, useRef} from 'react';
 import { Tab, TabPane } from 'semantic-ui-react';
-import './chat.css';
+import '@/css/chat.css';
 import Map from "./Map.jsx";
 import {initialSearch as search} from "../../helpers/constants.js";
 
-const Artifact = ({messages, maps, setMaps}) => {
+const Artifact = ({messages, maps, setMaps, setOpenChat, openChat}) => {
     const [panes, setPanes] = useState([]);
     const [mps, setMps] = useState([]);
     const tabRef = useRef(null);
@@ -61,8 +61,8 @@ const Artifact = ({messages, maps, setMaps}) => {
     }, [messages]);
 
     return (
-        <div id="sui" className="fixed flex w-full flex-col border-zinc-600 rounded-lg h-fit min-h-3/5" style={{maxWidth: '50vw', maxHeight: '80vh'}}>
-            <div ref={tabRef} className="flex flex-1 horizontal-scroll-container w-full">
+        <div id="sui" className="fixed w-full border-zinc-600 rounded-lg" style={{maxWidth: '50vw', maxHeight: '80vh'}}>
+            <div ref={tabRef} className="flex flex-1 flex-col horizontal-scroll-container w-full">
                 <Tab
                     menu={{
                         fluid: true,
@@ -75,6 +75,7 @@ const Artifact = ({messages, maps, setMaps}) => {
                     style={{display: 'flex', flex: '1', flexDirection: 'column', overflowX: 'hidden', position: 'relative'}}
                     className='tab-component'
                 />
+                <button onClick={() => setOpenChat(!openChat)}>Close</button>
             </div>
         </div>
     );

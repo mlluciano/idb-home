@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import IDBMap from './mapper';
-import queryBuilder from './querybuilder';
-import './leaflet.css'
-import parseQuery from '../../helpers/parsers';
+import IDBMap from '@/helpers/mapper';
+import queryBuilder from '@/helpers/querybuilder';
+import '@/css/leaflet.css'
+import parseQuery from '@/helpers/parsers';
 
 let map; // Declare map variable
 const searchDefaults = {
@@ -55,7 +55,7 @@ const searchDefaults = {
                 lat: false,
                 lon: false
             }
-        }   
+        }
     }
 }
 
@@ -65,8 +65,8 @@ const Map = (props) => {
 
     const mapRef = useRef(null); // To store the map instance without triggering re-renders
     const searchRef = useRef(props.search);
-    
-    
+
+
 
     // Equivalent to componentDidMount and componentDidUpdate
     useEffect(() => {
@@ -111,7 +111,7 @@ const Map = (props) => {
             if (mapRef.current) {
                 let m = props.maps
                 // console.log(props.maps)
-                if (m.length!=0) {
+                if (m?.length!=0) {
                     m.push({
                         "ID": mapID,
                         "rq": props.rq

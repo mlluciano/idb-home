@@ -9,7 +9,7 @@ import {
     Header,
 } from 'semantic-ui-react';
 import Map from './Map';
-import './chat.css'
+import '../../css/chat.css'
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
@@ -28,6 +28,18 @@ const Chat = () => {
     const [currentInput, setCurrentInput] = useState('')
     const [openChat, setOpenChat] = useState(false)
     const [maps, setMaps] = useState([])
+    const [isVisible, setIsVisible] = useState(false);
+    const [artifactOpen, setArtifactOpen] = useState(false);
+
+    useEffect(() => {
+        if (openChat) {
+            // Delay the visibility to trigger the transition
+            setTimeout(() => setIsVisible(true), 50);
+        } else {
+            setTimeout(() => {setIsVisible(false);}, 50);
+            setTimeout(() => {setArtifactOpen(false);}, 250);
+        }
+    }, [openChat]);
 
       const handleSubmit = () => {
         if (!openChat) {
@@ -76,30 +88,33 @@ const Chat = () => {
                 })
             }
         }
-        setMaps(m)
+        if (m.length > 0) {
+            setMaps(m)
+            setArtifactOpen(true)
+        }
     }, [messages]);
 
 
     return (
-        <div className='flex flex-col flex-1 w-full bg-zinc-800 min-h-screen'>
+        <div className='flex flex-col flex-1 w-full bg-zinc-800 min-h-screen overflow-hidden'>
 
-            <div className='flex w-full max-w-full'>
-                <img className='fixed top-0 left-0' src="src/components/chat/idb_simple_logo.png" alt="iDigBio" border="0" id="logo" style={{width: '75px', height: '75px'}}></img>
+            <div className='flex flex-0'>
+                <img className='fixed top-0 left-0' src="src/assets/idb_simple_logo.png" alt="iDigBio" border="0" id="logo" style={{width: '75px', height: '75px'}}></img>
                 <div className='flex text-red-500 absolute left-1/2'>Alpha</div>
             </div>
 
-            <div className='flex flex-1 justify-center items-start gap-20 mt-20'>
+            <div className='flex flex-1 justify-center items-start gap-20 p-20'>
 
-                <div className="flex w-2/5 justify-center ml-20">
-                    {openChat
+                <div className="flex flex-1 justify-center">
+                    {messages.length > 0
                         ? <Messages messages={messages} currentMessage={currentMessage} currentInput={currentInput}
                                               setCurrentInput={setCurrentInput} handleSubmit={handleSubmit}/>
                         : <Home currentInput={currentInput} setCurrentInput={setCurrentInput} handleSubmit={handleSubmit} />
                     }
                 </div>
-                {openChat &&
-                    <div className='flex flex-1 mr-0 overflow-x-hidden h-full '>
-                        <Artifact messages={messages} maps={maps} />
+                {artifactOpen &&
+                    <div className={`flex flex-1 transition-transform duration-300 ease-in-out ${isVisible ? 'translate-x-0' : 'translate-x-full'} `}>
+                        <Artifact messages={messages} maps={maps} openChat={openChat} setOpenChat={setOpenChat} />
                     </div>
                 }
             </div>
@@ -123,9 +138,9 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
 
 
     return (
-        <div ref={divRef} id="messages" className='relative flex flex-col flex-1 justify-start items-center text-white w-full'>
+        <div ref={divRef} id="messages" className='relative flex flex-col flex-1 justify-start items-center text-white max-w-5xl'>
 
-            <div className='flex flex-col flex-1 w-full gap-5 bg-zinc-700 border-zinc-600 border p-5 rounded border-box'>
+            <div className='flex flex-col flex-1 w-full  gap-5 bg-zinc-700 border-zinc-600 border p-5 rounded border-box'>
                 {messages.map((message, key) => (
                     message.type === "user_chat_message" ? (
                         <div key={key} className='self-end inline-block text-white bg-[#6AAA51] w-2/5 p-3 rounded-lg'>

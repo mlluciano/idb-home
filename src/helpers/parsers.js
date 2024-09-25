@@ -1,4 +1,4 @@
-import fields from "../components/chat/fields";
+import fields from "./constants/fields";
 
 function newFilterProps(term){
     const type = fields.byTerm[term].type;
@@ -24,7 +24,7 @@ export const unescapeString = (str) => {
 
 export const streamMessages_OLD = async (message, setMessages, setCurrentMessage) => {
     try {
-      const response = await fetch('https://chat.idigbio.org/chat', {
+      const response = await fetch('http://localhost:8080/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export const streamMessages_OLD = async (message, setMessages, setCurrentMessage
               if (currentType === 'ai_text_message') {
                 isParsingValue = true;
                 valueBuffer = ''; // Reset valueBuffer for new message
-              } else if (currentType==="ai_map_message" || "ai_processing_message") {
+              } else if (currentType==="ai_map_message" || currentType==="ai_processing_message") {
                 isParsingValue=false
                 valueBuffer = ''
               }
@@ -101,14 +101,12 @@ export const streamMessages_OLD = async (message, setMessages, setCurrentMessage
                 }
                 valueEnd++;
               }
-            //   console.log(valueEnd < buffer.length)
 
               if (valueEnd < buffer.length) {
                 // We have a complete value
                 valueBuffer = buffer.slice(valueContentStart, valueEnd);
 
                 if (currentType && valueBuffer.trim()) {
-
 
                     const newMessage = { type: currentType, value: valueBuffer }
                   setCurrentMessage({});
@@ -359,14 +357,14 @@ export default function parseQuery(search, query) {
                 }else if(_.isArray(v)){
                     filter.text = v.join('\n');
                 }
-                filters.unshift(filter);                   
+                filters.unshift(filter);
             }
         });
         if(filters.length > 0){
             search.filters = filters;
-        }  
+        }
     }catch(e){
         //fail parsing silently
     }
- 
+
 }

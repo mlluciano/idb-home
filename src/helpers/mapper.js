@@ -16,9 +16,9 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import GeoPoint from 'geopoint';
-import helpers from './helpers.js';
-import idbapi from './idbapi.js';
-import * as fields from './fields.js';
+import helpers from '@/helpers/helpers.js';
+import idbapi from '@/api/idbapi.js';
+import * as fields from '@/helpers/constants/fields.js';
 
 import L from 'leaflet';
 import leafletImage from 'leaflet-image';

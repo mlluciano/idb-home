@@ -1,9 +1,9 @@
 // ### QueryBuilder
 // module for building API queries from Search State object
 
-import fields from './fields';
+import fields from '@/helpers/constants/fields';
 import _ from 'lodash';
-import helpers from './helpers'; // Assuming there's a helpers module used
+import helpers from '@/helpers/helpers'; // Assuming there's a helpers module used
 
 class QueryBuilder {
   // ### makeQuery DEPRECATED IN FAVOR OF API
