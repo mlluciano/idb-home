@@ -14,6 +14,7 @@ import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {streamMessages_OLD} from '../../helpers/parsers'
+import {streamMessages_OBOE} from '../../helpers/parsers'
 import {initialSearch as search} from '../../helpers/constants'
 import remarkGfm from 'remark-gfm'
 import { unescapeString } from '../../helpers/parsers';
@@ -37,7 +38,7 @@ const Chat = () => {
             setTimeout(() => setIsVisible(true), 50);
         } else {
             setTimeout(() => {setIsVisible(false);}, 50);
-            setTimeout(() => {setArtifactOpen(false);}, 250);
+            setTimeout(() => {setArtifactOpen(false);}, 200);
         }
     }, [openChat]);
 
@@ -51,7 +52,7 @@ const Chat = () => {
         }
         setCurrentInput('')
         setMessages(prevMessages => [...prevMessages, user_message]);
-        streamMessages_OLD(user_message, setMessages, setCurrentMessage)
+        streamMessages_OBOE(user_message, setMessages, setCurrentMessage)
       }
 
       useEffect(() => {
@@ -103,7 +104,7 @@ const Chat = () => {
                 <div className='flex text-red-500 absolute left-1/2'>Alpha</div>
             </div>
 
-            <div className='flex flex-1 justify-center items-start gap-20 p-20'>
+            <div className='flex flex-1 justify-center items-start gap-20 p-10 pt-20 pl-20'>
 
                 <div className="flex flex-1 justify-center">
                     {messages.length > 0
@@ -113,7 +114,7 @@ const Chat = () => {
                     }
                 </div>
                 {artifactOpen &&
-                    <div className={`flex flex-1 transition-transform duration-300 ease-in-out ${isVisible ? 'translate-x-0' : 'translate-x-full'} `}>
+                    <div className={`relative flex flex-1 transition-transform duration-200 ease-in-out ${isVisible ? 'translate-x-0' : 'translate-x-full'} `}>
                         <Artifact messages={messages} maps={maps} openChat={openChat} setOpenChat={setOpenChat} />
                     </div>
                 }

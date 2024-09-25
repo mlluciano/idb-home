@@ -61,7 +61,7 @@ const Artifact = ({messages, maps, setMaps, setOpenChat, openChat}) => {
     }, [messages]);
 
     return (
-        <div id="sui" className="fixed w-full border-zinc-600 rounded-lg" style={{maxWidth: '50vw', maxHeight: '80vh'}}>
+        <div id="sui" className="sticky top-0 right-0 w-full border-zinc-600 rounded-lg" style={{maxWidth: '50vw', maxHeight: '80vh'}}>
             <div ref={tabRef} className="flex flex-1 flex-col horizontal-scroll-container w-full">
                 <Tab
                     menu={{

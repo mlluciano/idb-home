@@ -73,7 +73,7 @@ const Map = (props) => {
         // let search = searchDefaults
         parseQuery(searchDefaults, props.rq)
         // console.log(search)
-        console.log(searchDefaults)
+        // console.log(searchDefaults)
 
         if (!mapRef.current) {
             let mapID = `map-${props.mapid}`
@@ -130,7 +130,7 @@ const Map = (props) => {
         const query = queryBuilder.buildQueryShim(searchDefaults);
         mapRef.current.query(props.rq);
     }, []);
-    console.log(props.maps)
+    // console.log(props.maps)
 
     // Equivalent to UNSAFE_componentWillReceiveProps and shouldComponentUpdate
     useEffect(() => {

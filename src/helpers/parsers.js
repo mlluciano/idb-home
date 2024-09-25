@@ -1,4 +1,46 @@
 import fields from "./constants/fields";
+import oboe from 'oboe';
+
+export const streamMessages_OBOE = async (message, setMessages, setCurrentMessage) => {
+  try {
+    oboe({
+      url: 'http://localhost:8080/chat',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json-stream',
+      },
+      body: JSON.stringify(message),
+      withCredentials: true
+    })
+    .node('!.*', function(message) {
+      if (message && message.type) {
+        switch (message.type) {
+          case 'ai_text_message':
+            if (message.value && message.value.trim()) {
+              setCurrentMessage({});
+              setMessages(prevMessages => [...prevMessages, message]);
+            }
+            break;
+          case 'ai_processing_message':
+          case 'ai_map_message':
+            if (message.value) {
+              setMessages(prevMessages => [...prevMessages, message]);
+            }
+            break;
+          default:
+            console.log('Unknown message type:', message.type);
+        }
+      }
+      return oboe.drop; // This tells oboe to discard the node after we've processed it
+    })
+    .fail(function(error) {
+      console.error('Error fetching data:', error);
+    });
+  } catch (error) {
+    console.error('Error setting up oboe:', error);
+  }
+};
 
 function newFilterProps(term){
     const type = fields.byTerm[term].type;
