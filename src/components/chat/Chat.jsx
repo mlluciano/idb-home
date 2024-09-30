@@ -100,7 +100,7 @@ const Chat = () => {
         <div className='flex flex-col flex-1 w-full bg-zinc-800 min-h-screen overflow-hidden'>
 
             <div className='flex flex-0'>
-                <img className='fixed top-0 left-0' src="src/assets/idb_simple_logo.png" alt="iDigBio" border="0" id="logo" style={{width: '75px', height: '75px'}}></img>
+                <img className='fixed top-0 left-0' src="src/assets/chat_logo.png" alt="iDigBio" border="0" id="logo" style={{width: '75px', height: '75px'}}></img>
                 <div className='flex text-red-500 absolute left-1/2'>Alpha</div>
             </div>
 
