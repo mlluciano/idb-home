@@ -104,6 +104,10 @@ const Chat = () => {
                 <div className='flex text-red-500 absolute left-1/2'>Alpha</div>
             </div>
 
+            <div className='absolute left-0 top-0'>
+                
+            </div>
+
             <div className='flex flex-1 justify-center items-start gap-20 p-10 pt-20 pl-20'>
 
                 <div className="flex flex-1 justify-center">
@@ -114,7 +118,7 @@ const Chat = () => {
                     }
                 </div>
                 {artifactOpen &&
-                    <div className={`relative flex flex-1  `}>
+                    <div className={`relative flex flex-1`}>
                         <Artifact isVisible={isVisible} messages={messages} maps={maps} openChat={openChat} setOpenChat={setOpenChat} />
                     </div>
                 }
@@ -296,6 +300,7 @@ const Home = ({currentInput, setCurrentInput, handleSubmit}) => {
                         className="flex text-white bg-zinc-700 border rounded-lg border-zinc-600 mt-5" rows={1} style={{height: '100px'}}/>
                 </Form>
             </div>
+            <div className='mt-10 text-red-500'>This is a research prototype not yet ready for public use.</div>
         </div>
     )
 }
