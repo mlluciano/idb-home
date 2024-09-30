@@ -31,6 +31,7 @@ const Chat = () => {
     const [maps, setMaps] = useState([])
     const [isVisible, setIsVisible] = useState(false);
     const [artifactOpen, setArtifactOpen] = useState(false);
+    const [activeArtifactIndex, setActiveArtifactIndex] = useState()
 
     useEffect(() => {
         if (openChat) {
@@ -104,22 +105,20 @@ const Chat = () => {
                 <div className='flex text-red-500 absolute left-1/2'>Alpha</div>
             </div>
 
-            <div className='absolute left-0 top-0'>
-                
-            </div>
-
             <div className='flex flex-1 justify-center items-start gap-20 p-10 pt-20 pl-20'>
 
                 <div className="flex flex-1 justify-center">
                     {messages.length > 0
                         ? <Messages messages={messages} currentMessage={currentMessage} currentInput={currentInput}
-                                              setCurrentInput={setCurrentInput} handleSubmit={handleSubmit}/>
+                                    setCurrentInput={setCurrentInput} handleSubmit={handleSubmit} 
+                                    activeArtifactIndex={activeArtifactIndex} setActiveArtifactIndex={setActiveArtifactIndex} 
+                                    artifactOpen={artifactOpen} setArtifactOpen={setArtifactOpen} openChat={openChat} setOpenChat={setOpenChat} />
                         : <Home currentInput={currentInput} setCurrentInput={setCurrentInput} handleSubmit={handleSubmit} />
                     }
                 </div>
                 {artifactOpen &&
-                    <div className={`relative flex flex-1`}>
-                        <Artifact isVisible={isVisible} messages={messages} maps={maps} openChat={openChat} setOpenChat={setOpenChat} />
+                    <div className={`relative flex flex-1 `}>
+                        <Artifact isVisible={isVisible} messages={messages} maps={maps} openChat={openChat} setOpenChat={setOpenChat} activeArtifactIndex={activeArtifactIndex} setActiveArtifactIndex={setActiveArtifactIndex} />
                     </div>
                 }
             </div>
@@ -129,10 +128,10 @@ const Chat = () => {
     )
 }
 
-const Messages = ({messages, currentMessage, currentInput, setCurrentInput, handleSubmit}) => {
+const Messages = ({messages, currentMessage, currentInput, setCurrentInput, handleSubmit, activeArtifactIndex, setActiveArtifactIndex, artifactOpen, setArtifactOpen, openChat, setOpenChat}) => {
     const [maps, setMaps] = useState([])
     const [activeIndex, setActiveIndex] = useState()
-
+    
     const divRef = useRef(null);
 
     useEffect(() => {
@@ -140,6 +139,16 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
             divRef.current.scrollTop = divRef.current.scrollHeight;
         }
     }, [currentMessage, messages]);
+
+    const handleArtifactClick = (key) => {
+        if (!artifactOpen) {
+        setActiveArtifactIndex(key)
+        setArtifactOpen(!artifactOpen)
+        setOpenChat(!openChat)
+        } else {
+            setActiveArtifactIndex(key)
+        }
+    }
 
 
     return (
@@ -222,6 +231,14 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
                                     </ReactMarkdown>
                                 </AccordionContent>
                             </Accordion>
+                        </div>
+                    ) : message.type === "ai_map_message" ? (
+                        <div key={key} className='min-w-1/2' onClick={() => handleArtifactClick(key)}>
+                            <div 
+                            className='flex flex-col items-start justify-start bg-zinc-800 min-h-9 rounded-lg hover:cursor-pointer border-zinc-600 border'>
+                                <span className='bold px-2 pt-1 justify-start'>Map of {message.value.rq.scientificname ? message.value.rq.scientificname : JSON.stringify(message.value.rq)}</span>
+                                <span className='px-2 pb-1 font-extralight text-sm'>Click to view</span>
+                            </div>
                         </div>
                     ) : (
                         <div key={key}></div>

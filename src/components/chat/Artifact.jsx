@@ -4,10 +4,11 @@ import '@/css/chat.css';
 import Map from "./Map.jsx";
 import {initialSearch as search} from "../../helpers/constants.js";
 
-const Artifact = ({isVisible, messages, maps, setMaps, setOpenChat, openChat}) => {
+const Artifact = ({isVisible, messages, maps, setMaps, setOpenChat, openChat, activeArtifactIndex, setActiveArtifactIndex}) => {
     const [panes, setPanes] = useState([]);
     const [mps, setMps] = useState([]);
     const tabRef = useRef(null);
+    // const [activeArtifact, setActiveArtifact] = useState(activeArtifactIndex);
 
 
     useEffect(() => {function updateScrollIndicator() {
@@ -47,23 +48,24 @@ const Artifact = ({isVisible, messages, maps, setMaps, setOpenChat, openChat}) =
 
     useEffect(() => {
         let p = messages
-            .filter(message => message.type === 'ai_map_message')
-            .map((message, index) => ({
-                menuItem: JSON.stringify(message.value.rq),
-                render: () => (
+            // .filter(message => message.type === 'ai_map_message')
+            .map((message, index) => {
+                if (message.type === 'ai_map_message') return {
+                    menuItem: JSON.stringify(message.value.rq),
+                    render: () => (
                     <TabPane as='div' key={index} className='flex flex-col' style={{backgroundColor: 'rgb(40, 44, 52)', borderColor: 'rgb(82 82 91)', border: '1px solid rgb(82 82 91)', borderRadius: '5px'}}>
                         <div className='text-white p-4'>{JSON.stringify(message.value.rq)}</div>
                         <Map rq={message.value.rq} search={search} maps={mps} setMaps={setMps} mapid={index}/>
                     </TabPane>
-                )
-            }));
+                )}
+            });
         setPanes(p);
     }, [messages]);
 
     return (
         <div 
         id="sui" 
-        className={`fixed right-0 px-10 w-full border-zinc-600 rounded-lg`} // Webkit transform creates a new stacking context. Transform must be applied to a child if using position: fixed.
+        className={`absolute right-0 px-10 w-full border-zinc-600 rounded-lg`} // Webkit transform creates a new stacking context. Transform must be applied to a child if using position: fixed.
         style={{maxWidth: '50vw', maxHeight: '80vh'}}>
             <div 
             ref={tabRef} 
@@ -80,6 +82,11 @@ const Artifact = ({isVisible, messages, maps, setMaps, setOpenChat, openChat}) =
                     renderActiveOnly={true}
                     style={{display: 'flex', flex: '1', flexDirection: 'column', overflowX: 'hidden', position: 'relative'}}
                     className='tab-component'
+                    activeIndex={activeArtifactIndex}
+                    onTabChange={(e, data) => {
+                        setActiveArtifactIndex(data.activeIndex);
+                        console.log(data.activeIndex);
+                    }}
                 />
                 <button onClick={() => setOpenChat(!openChat)}>Close</button>
             </div>
