@@ -4,7 +4,7 @@ import '@/css/chat.css';
 import Map from "./Map.jsx";
 import {initialSearch as search} from "../../helpers/constants.js";
 
-const Artifact = ({messages, maps, setMaps, setOpenChat, openChat}) => {
+const Artifact = ({isVisible, messages, maps, setMaps, setOpenChat, openChat}) => {
     const [panes, setPanes] = useState([]);
     const [mps, setMps] = useState([]);
     const tabRef = useRef(null);
@@ -61,8 +61,14 @@ const Artifact = ({messages, maps, setMaps, setOpenChat, openChat}) => {
     }, [messages]);
 
     return (
-        <div id="sui" className="sticky top-0 right-0 w-full border-zinc-600 rounded-lg" style={{maxWidth: '50vw', maxHeight: '80vh'}}>
-            <div ref={tabRef} className="flex flex-1 flex-col horizontal-scroll-container w-full">
+        <div 
+        id="sui" 
+        className={`fixed right-0 px-10 w-full border-zinc-600 rounded-lg`} // Webkit transform creates a new stacking context. Transform must be applied to a child if using position: fixed.
+        style={{maxWidth: '50vw', maxHeight: '80vh'}}>
+            <div 
+            ref={tabRef} 
+            className={`flex flex-1 flex-col horizontal-scroll-container w-full 
+                        transition-transform duration-200 ease-in-out ${isVisible ? 'translate-x-0' : 'translate-x-full'} `}> 
                 <Tab
                     menu={{
                         fluid: true,

@@ -114,8 +114,8 @@ const Chat = () => {
                     }
                 </div>
                 {artifactOpen &&
-                    <div className={`relative flex flex-1 transition-transform duration-200 ease-in-out ${isVisible ? 'translate-x-0' : 'translate-x-full'} `}>
-                        <Artifact messages={messages} maps={maps} openChat={openChat} setOpenChat={setOpenChat} />
+                    <div className={`relative flex flex-1  `}>
+                        <Artifact isVisible={isVisible} messages={messages} maps={maps} openChat={openChat} setOpenChat={setOpenChat} />
                     </div>
                 }
             </div>
