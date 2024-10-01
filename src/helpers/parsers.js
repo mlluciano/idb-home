@@ -4,7 +4,7 @@ import oboe from 'oboe';
 export const streamMessages_OBOE = async (message, setMessages, setCurrentMessage) => {
   try {
     oboe({
-      url: 'http://localhost:8080/chat',
+      url: '/chat',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +66,7 @@ export const unescapeString = (str) => {
 
 export const streamMessages_OLD = async (message, setMessages, setCurrentMessage) => {
     try {
-      const response = await fetch('http://localhost:8080/chat', {
+      const response = await fetch('/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -226,7 +226,7 @@ export const streamMessages_OLD = async (message, setMessages, setCurrentMessage
   };
 
 export const streamMessages = async (message) => {
-    const response = await fetch('http://sobami2.acis.ufl.edu:8080/chat', {
+    const response = await fetch('/chat', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
