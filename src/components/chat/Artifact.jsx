@@ -65,7 +65,7 @@ const Artifact = ({isVisible, messages, maps, setMaps, setOpenChat, openChat, ac
     return (
         <div 
         id="sui" 
-        className={`absolute right-0 px-10 w-full border-zinc-600 rounded-lg`} // Webkit transform creates a new stacking context. Transform must be applied to a child if using position: fixed.
+        className={`fixed right-0 px-10 w-full border-zinc-600 rounded-lg`} // Webkit transform creates a new stacking context. Transform must be applied to a child if using position: fixed.
         style={{maxWidth: '50vw', maxHeight: '80vh'}}>
             <div 
             ref={tabRef} 
