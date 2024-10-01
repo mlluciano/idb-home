@@ -13066,7 +13066,7 @@ var require_idbapi = __commonJS((exports, module) => {
         return window2.idbapi.host;
       } else if (false) {
       } else {
-        return "http://localhost:19196/v2/";
+        return "https://search.idigbio.org/v2/";
       }
     }.call(),
     media_host: function() {
