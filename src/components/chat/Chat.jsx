@@ -173,6 +173,7 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
                                             </code>
                                         );
                                     },
+                                    a: NewTabLink
                                 }}
                             >
                                 {unescapeString(message.value)}
@@ -215,6 +216,7 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
                                                     </code>
                                                 );
                                             },
+                                            a: NewTabLink
                                         }}
                                     >
                                         {unescapeString(message.value.content)}
@@ -255,6 +257,7 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
                                         </code>
                                     );
                                 },
+                                a: NewTabLink
                             }}
                         >
                             {currentMessage.value}
@@ -284,6 +287,18 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
         </div>
     )
 }
+
+const NewTabLink = ({ href, children }) => {
+    const isExternal = href.startsWith('http') || href.startsWith('https');
+    return isExternal ? (
+        <a href={href} target="_blank" rel="noopener noreferrer">
+            {children}
+        </a>
+    ) : (
+        <a href={href}>{children}</a>
+    );
+};
+
 //
 // const Message = ({key, message}) => {
 //
