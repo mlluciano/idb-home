@@ -8,14 +8,11 @@ import {
     AccordionContent,
     Header,
 } from 'semantic-ui-react';
-import Map from './Map';
 import '../../css/chat.css'
 import ReactMarkdown from "react-markdown"
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import {streamMessages_OLD} from '../../helpers/parsers'
 import {streamMessages_OBOE} from '../../helpers/parsers'
-import {initialSearch as search} from '../../helpers/constants'
 import remarkGfm from 'remark-gfm'
 import { unescapeString } from '../../helpers/parsers';
 import Artifact from "./Artifact.jsx";
@@ -32,16 +29,6 @@ const Chat = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [artifactOpen, setArtifactOpen] = useState(false);
     const [activeArtifactIndex, setActiveArtifactIndex] = useState()
-
-    useEffect(() => {
-        if (openChat) {
-            // Delay the visibility to trigger the transition
-            setTimeout(() => setIsVisible(true), 50);
-        } else {
-            setTimeout(() => {setIsVisible(false);}, 50);
-            setTimeout(() => {setArtifactOpen(false);}, 200);
-        }
-    }, [openChat]);
 
       const handleSubmit = () => {
         if (!openChat) {
@@ -92,7 +79,6 @@ const Chat = () => {
         }
         if (m.length > 0) {
             setMaps(m)
-            setArtifactOpen(true)
         }
     }, [messages]);
 
@@ -106,19 +92,24 @@ const Chat = () => {
             </div>
 
             <div className='flex flex-1 justify-center items-start gap-20 p-10 pt-20 pl-20'>
-
                 <div className="flex flex-1 justify-center">
                     {messages.length > 0
-                        ? <Messages messages={messages} currentMessage={currentMessage} currentInput={currentInput}
-                                    setCurrentInput={setCurrentInput} handleSubmit={handleSubmit} 
-                                    activeArtifactIndex={activeArtifactIndex} setActiveArtifactIndex={setActiveArtifactIndex} 
-                                    artifactOpen={artifactOpen} setArtifactOpen={setArtifactOpen} openChat={openChat} setOpenChat={setOpenChat} />
+                        ? <Messages messages={messages} currentMessage={currentMessage}
+                                    currentInput={currentInput} setCurrentInput={setCurrentInput} handleSubmit={handleSubmit}
+                                    activeArtifactIndex={activeArtifactIndex} setActiveArtifactIndex={setActiveArtifactIndex}
+                                    artifactOpen={artifactOpen} setArtifactOpen={setArtifactOpen}
+                                    setIsVisible={setIsVisible} />
+
                         : <Home currentInput={currentInput} setCurrentInput={setCurrentInput} handleSubmit={handleSubmit} />
                     }
                 </div>
+
                 {artifactOpen &&
-                    <div className={`relative flex flex-1 `}>
-                        <Artifact isVisible={isVisible} messages={messages} maps={maps} openChat={openChat} setOpenChat={setOpenChat} activeArtifactIndex={activeArtifactIndex} setActiveArtifactIndex={setActiveArtifactIndex} />
+                    <div className={`relative flex flex-1 justify-end `}>
+                        <Artifact messages={messages}
+                                  artifactOpen={artifactOpen} setArtifactOpen={setArtifactOpen}
+                                  isVisible={isVisible} setIsVisible={setIsVisible}
+                                  setActiveArtifactIndex={setActiveArtifactIndex} />
                     </div>
                 }
             </div>
@@ -128,10 +119,9 @@ const Chat = () => {
     )
 }
 
-const Messages = ({messages, currentMessage, currentInput, setCurrentInput, handleSubmit, activeArtifactIndex, setActiveArtifactIndex, artifactOpen, setArtifactOpen, openChat, setOpenChat}) => {
-    const [maps, setMaps] = useState([])
+const Messages = ({messages, currentMessage, currentInput, setCurrentInput, handleSubmit, setActiveArtifactIndex, artifactOpen, setArtifactOpen, setIsVisible}) => {
     const [activeIndex, setActiveIndex] = useState()
-    
+
     const divRef = useRef(null);
 
     useEffect(() => {
@@ -142,9 +132,9 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
 
     const handleArtifactClick = (key) => {
         if (!artifactOpen) {
-        setActiveArtifactIndex(key)
-        setArtifactOpen(!artifactOpen)
-        setOpenChat(!openChat)
+            setActiveArtifactIndex(key)
+            setArtifactOpen(!artifactOpen)
+            setTimeout(() => setIsVisible(true), 50);
         } else {
             setActiveArtifactIndex(key)
         }
@@ -160,7 +150,7 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
                         <div key={key} className='self-end inline-block text-white bg-[#6AAA51] w-2/5 p-3 rounded-lg'>
                             {message.value}
                         </div>
-                    ) : message.type === "ai_text_message" ? ( // role: "ai"
+                    ) : message.type === "ai_text_message" ? (
                         <div key={key} id="sui">
                             <ReactMarkdown
                                 className='dark-table'
@@ -234,7 +224,7 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
                         </div>
                     ) : message.type === "ai_map_message" ? (
                         <div key={key} className='min-w-1/2' onClick={() => handleArtifactClick(key)}>
-                            <div 
+                            <div
                             className='flex flex-col items-start justify-start bg-zinc-800 min-h-9 rounded-lg hover:cursor-pointer border-zinc-600 border'>
                                 <span className='bold px-2 pt-1 justify-start'>Map of {message.value.rq.scientificname ? message.value.rq.scientificname : JSON.stringify(message.value.rq)}</span>
                                 <span className='px-2 pb-1 font-extralight text-sm'>Click to view</span>
@@ -269,7 +259,6 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
                         >
                             {currentMessage.value}
                         </ReactMarkdown>
-                        {/*<ReactMarkdown className='md-container'>{currentMessage.value}</ReactMarkdown>*/}
                     </div>
                 }
 
@@ -295,6 +284,18 @@ const Messages = ({messages, currentMessage, currentInput, setCurrentInput, hand
         </div>
     )
 }
+//
+// const Message = ({key, message}) => {
+//
+//     return (
+//         {message.type === 'ai_map_message' ? <MapMessage />
+//         ? message.type ==='ai_text_message' : <TextMessage />
+//         : <div>hi</div>
+//         }
+//     )
+//
+// }
+
 
 const Home = ({currentInput, setCurrentInput, handleSubmit}) => {
 
@@ -310,10 +311,11 @@ const Home = ({currentInput, setCurrentInput, handleSubmit}) => {
                                 handleSubmit()
                             }
                         }}
-                        value={currentInput} onChange={(e) => {
-
-                        setCurrentInput(e.target.value)
-                    }} placeholder='How can I help you today?'
+                        value={currentInput}
+                        onChange={(e) => {
+                            setCurrentInput(e.target.value)
+                        }}
+                        placeholder='How can I help you today?'
                         className="flex text-white bg-zinc-700 border rounded-lg border-zinc-600 mt-5" rows={1} style={{height: '100px'}}/>
                 </Form>
             </div>
