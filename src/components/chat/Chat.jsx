@@ -21,18 +21,22 @@ const Chat = () => {
     const [isVisible, setIsVisible] = useState(false);
     const [artifactOpen, setArtifactOpen] = useState(false);
     const [activeArtifactIndex, setActiveArtifactIndex] = useState()
+    const [loading, setLoading] = useState()
 
     const handleSubmit = () => {
-        if (!openChat) {
-            setOpenChat(true)
+        if (currentInput!== '' ) {
+            setLoading(true)
+            if (!openChat) {
+                setOpenChat(true)
+            }
+            const user_message = {
+                type: "user_chat_message",
+                value: currentInput
+            }
+            setCurrentInput('')
+            setMessages(prevMessages => [...prevMessages, user_message]);
+            streamMessages_OBOE(user_message, setMessages, setCurrentMessage, setLoading)
         }
-        const user_message = {
-            type: "user_chat_message",
-            value: currentInput
-        }
-        setCurrentInput('')
-        setMessages(prevMessages => [...prevMessages, user_message]);
-        streamMessages_OBOE(user_message, setMessages, setCurrentMessage)
     }
 
     useEffect(() => {
@@ -95,7 +99,7 @@ const Chat = () => {
                                     activeArtifactIndex={activeArtifactIndex}
                                     setActiveArtifactIndex={setActiveArtifactIndex}
                                     artifactOpen={artifactOpen} setArtifactOpen={setArtifactOpen}
-                                    setIsVisible={setIsVisible}/>
+                                    setIsVisible={setIsVisible} loading={loading} setLoading={setLoading}/>
 
                         : <Home currentInput={currentInput} setCurrentInput={setCurrentInput}
                                 handleSubmit={handleSubmit}/>

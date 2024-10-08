@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Form, TextArea} from "semantic-ui-react";
+import {Form, TextArea, Loader, Segment} from "semantic-ui-react";
 import Message from "./Message.jsx";
 
 const Messages = ({
@@ -12,6 +12,7 @@ const Messages = ({
                       artifactOpen,
                       setArtifactOpen,
                       setIsVisible,
+                      loading,
                   }) => {
 
     const [activeIndex, setActiveIndex] = useState();
@@ -41,7 +42,8 @@ const Messages = ({
             id="messages"
             className="relative flex flex-col flex-1 justify-start items-center text-white max-w-5xl"
         >
-            <div className="flex flex-col flex-1 w-full gap-5 bg-zinc-700 border-zinc-600 border p-5 rounded border-box">
+            <div id="sui"
+                className="flex flex-col flex-1 w-full gap-5 bg-zinc-700 border-zinc-600 border p-5 rounded border-box">
                 {messages.map((message, key) => (
                     <Message
                         key={key}
@@ -62,8 +64,8 @@ const Messages = ({
                         handleArtifactClick={handleArtifactClick}
                     />
                 )}
-                <div id="sui" className="flex">
-                    <Form className="flex w-full justify-center">
+                <div id="sui" className="relative flex items-center justify-center">
+                    <Form className="flex w-full justify-center items-center gap-2">
                         <TextArea
                             onKeyDown={(e) => {
                                 if (e.keyCode === 13 && !e.shiftKey) {
@@ -75,10 +77,12 @@ const Messages = ({
                             onChange={(e) => {
                                 setCurrentInput(e.target.value);
                             }}
-                            placeholder="Message iDigBio"
+                            placeholder={!loading ? "Message iDigBio" : "Loading..."}
                             className="flex justify-center text-white bg-zinc-700 border rounded-lg border-zinc-500"
                             rows={1}
+                            disabled={loading}
                         />
+                        <Loader as="div" inverted inline={loading} disabled={loading} size='small' />
                     </Form>
                 </div>
             </div>
