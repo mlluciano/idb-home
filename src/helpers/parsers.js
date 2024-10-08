@@ -1,8 +1,9 @@
 import fields from "./constants/fields";
 import oboe from 'oboe';
 
-export const streamMessages_OBOE = async (message, setMessages, setCurrentMessage) => {
+export const streamMessages_OBOE = async (message, setMessages, setCurrentMessage, setLoading) => {
   try {
+    setLoading(true)
     oboe({
       url: '/chat',
       method: 'POST',
@@ -33,6 +34,8 @@ export const streamMessages_OBOE = async (message, setMessages, setCurrentMessag
         }
       }
       return oboe.drop; // This tells oboe to discard the node after we've processed it
+    }).done(() => {
+        setLoading(false)
     })
     .fail(function(error) {
       console.error('Error fetching data:', error);
