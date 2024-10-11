@@ -1,13 +1,38 @@
-import {Accordion, Icon} from "semantic-ui-react";
+import {Accordion, Button, Icon} from "semantic-ui-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import {Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import {tomorrow} from "react-syntax-highlighter/dist/cjs/styles/prism/index.js";
 import {unescapeString} from "../../../helpers/parsers.js";
-import React from "react";
+import React, {useState} from "react";
 import {NewTabLink} from "../Chat.jsx";
 
+function extractJsonFromMarkdown(markdown) {
+    // Regular expression to match content inside ```json blocks
+    const jsonBlockRegex = /```json\n([\s\S]*?)\n```/;
+    // Extract the content inside the ```json block
+    const match = markdown.match(jsonBlockRegex);
+    if (match && match[1]) {
+        // Return the raw content inside the ```json block, trimming any leading/trailing whitespace
+        return match[1].trim();
+    }
+    return null;
+}
+
 const ProcessingMessage = ({ message, index, activeIndex, setActiveIndex }) => {
+    const [copied, setCopied] = useState(false)
+
+    const copyQuery = () => {
+        try {
+            const json = extractJsonFromMarkdown(message.value.content)
+            navigator.clipboard.writeText(json)
+            setCopied(true)
+            setTimeout(() => setCopied(false), 2000);
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     return (
         <div
             id="sui"
@@ -30,6 +55,12 @@ const ProcessingMessage = ({ message, index, activeIndex, setActiveIndex }) => {
                     active={activeIndex === index}
                     className="bg-black p-4"
                 >
+                    <div className='flex justify-end'>
+                        <Button onClick={() => copyQuery()} icon={copied ? "clipboard check" : "clipboard"} size="tiny">
+                            <Icon name={copied ? "clipboard check" : "clipboard"}/>
+                            {copied ? "Copied!" : "Copy"}
+                        </Button>
+                    </div>
                     <ReactMarkdown
                         remarkPlugins={[remarkGfm]}
                         components={{
