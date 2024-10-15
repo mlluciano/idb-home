@@ -8,7 +8,7 @@ import '../../css/chat.css'
 import {streamMessages_OBOE} from '../../helpers/parsers'
 import Artifact from "./Artifact.jsx";
 import Messages from "./messages/Messages.jsx";
-
+import Menu from "./menus/Menu.jsx"
 const footerHeight = 140
 const contentHeight = `calc(100vh - ${footerHeight}px)`;
 
@@ -22,6 +22,8 @@ const Chat = () => {
     const [artifactOpen, setArtifactOpen] = useState(false);
     const [activeArtifactIndex, setActiveArtifactIndex] = useState()
     const [loading, setLoading] = useState()
+
+    const [newChatModalOpen, setNewChatModalOpen] = useState(false)
 
     const handleSubmit = () => {
         if (currentInput!== '' ) {
@@ -39,30 +41,29 @@ const Chat = () => {
         }
     }
 
-    useEffect(() => {
-        document.title = "TDWG Demo";
-
-        async function clear() {
-            const clear_chat_on_server = {
-                type: "user_chat_message",
-                value: "clear"
-            }
-
-            const response = await fetch('/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json-stream',
-                },
-                body: JSON.stringify(clear_chat_on_server),
-                credentials: "include"
-            });
-
-            if (!response.ok) {
-                console.log(response.status)
-            }
+    async function clear() {
+        const clear_chat_on_server = {
+            type: "user_chat_message",
+            value: "clear"
         }
 
+        const response = await fetch('http://localhost:8989/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json-stream',
+            },
+            body: JSON.stringify(clear_chat_on_server),
+            credentials: "include"
+        });
+
+        if (!response.ok) {
+            console.log(response.status)
+        }
+    }
+
+    useEffect(() => {
+        document.title = "TDWG Demo";
         clear()
     }, [])
 
@@ -89,6 +90,11 @@ const Chat = () => {
                      style={{width: '75px', height: '75px'}}></img>
                 <div className='flex text-red-500 absolute left-1/2'>Alpha</div>
             </div>
+
+            {openChat &&
+                <Menu newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen} clear={clear} setLoading={setLoading} setMessages={setMessages} openChat={openChat} setOpenChat={setOpenChat}/>
+            }
+
 
             <div className='flex flex-1 justify-center items-start gap-20 p-10 pt-20 pl-20'>
                 <div className="flex flex-1 justify-center">
