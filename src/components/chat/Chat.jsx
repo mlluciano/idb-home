@@ -24,6 +24,15 @@ const Chat = () => {
     const [loading, setLoading] = useState()
 
     const [newChatModalOpen, setNewChatModalOpen] = useState(false)
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    useEffect(() => {
+        scrollToBottom()
+    }, [messages])
 
     const handleSubmit = () => {
         if (currentInput!== '' ) {
@@ -110,7 +119,7 @@ const Chat = () => {
                                     activeArtifactIndex={activeArtifactIndex}
                                     setActiveArtifactIndex={setActiveArtifactIndex}
                                     artifactOpen={artifactOpen} setArtifactOpen={setArtifactOpen}
-                                    setIsVisible={setIsVisible} loading={loading} setLoading={setLoading}/>
+                                    setIsVisible={setIsVisible} loading={loading} setLoading={setLoading} messagesEndRef={messagesEndRef}/>
 
                         : <Home currentInput={currentInput} setCurrentInput={setCurrentInput}
                                 handleSubmit={handleSubmit}/>

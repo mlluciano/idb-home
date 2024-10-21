@@ -13,6 +13,7 @@ const Messages = ({
                       setArtifactOpen,
                       setIsVisible,
                       loading,
+                      messagesEndRef
                   }) => {
 
     const [activeIndex, setActiveIndex] = useState();
@@ -54,6 +55,7 @@ const Messages = ({
                         handleArtifactClick={handleArtifactClick}
                     />
                 ))}
+                <div ref={messagesEndRef} />
                 {currentMessage && (
                     <Message
                         key={activeIndex}
