@@ -58,6 +58,7 @@ const Menu = ({newChatModalOpen, setNewChatModalOpen, clear, setMessages, setLoa
 
     return (
         <div id="sui" className='flex justify-end p-5 gap-5'>
+            <div className="flex fixed top-0 right-0 gap-5 p-5">
             {options.map((icon, index) => (
                 <Popup
                     trigger={
@@ -68,6 +69,7 @@ const Menu = ({newChatModalOpen, setNewChatModalOpen, clear, setMessages, setLoa
                     position="bottom right"
                 />
             ))}
+            </div>
 
             <NewChatModal
                 newChatModalOpen={newChatModalOpen}

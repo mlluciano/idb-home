@@ -92,8 +92,13 @@ const Chat = () => {
             </div>
 
             {openChat &&
-                <Menu newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen} clear={clear} setLoading={setLoading} setMessages={setMessages} openChat={openChat} setOpenChat={setOpenChat}/>
-            }
+                        <Menu
+                            clear={clear}
+                            setMessages={setMessages} setLoading={setLoading}
+                            newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen}
+                            openChat={openChat} setOpenChat={setOpenChat}
+                        />
+}
 
 
             <div className='flex flex-1 justify-center items-start gap-20 p-10 pt-20 pl-20'>
