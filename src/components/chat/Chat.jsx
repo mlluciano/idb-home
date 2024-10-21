@@ -63,7 +63,7 @@ const Chat = () => {
     }
 
     useEffect(() => {
-        document.title = "TDWG Demo";
+        document.title = "Chat";
         clear()
     }, [])
 
