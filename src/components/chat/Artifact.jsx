@@ -4,12 +4,18 @@ import '@/css/chat.css';
 import Map from "./Map.jsx";
 import {initialSearch as search} from "../../helpers/constants.js";
 
-const Artifact = ({isVisible, messages, activeArtifactIndex, setActiveArtifactIndex, setArtifactOpen, setIsVisible}) => {
+const Artifact = ({
+                      isVisible,
+                      messages,
+                      activeArtifactIndex,
+                      setActiveArtifactIndex,
+                      setArtifactOpen,
+                      setIsVisible
+ }) => {
+
     const [panes, setPanes] = useState([]);
     const [mps, setMps] = useState([]);
     const tabRef = useRef(null);
-    // const [activeArtifact, setActiveArtifact] = useState(activeArtifactIndex);
-
 
     useEffect(() => {function updateScrollIndicator() {
         const container = document.querySelector('.horizontal-scroll-container');
@@ -65,7 +71,7 @@ const Artifact = ({isVisible, messages, activeArtifactIndex, setActiveArtifactIn
         <div
         id="sui"
         className={`fixed right-0 px-10 w-full border-zinc-600 rounded-lg`} // Webkit transform creates a new stacking context. Transform must be applied to a child if using position: fixed.
-        style={{maxWidth: '50vw', maxHeight: '80vh'}}>
+        style={{maxWidth: '50vw', maxHeight: '80vh', left: "auto", right:0}}>
             <div
             ref={tabRef}
             className={`flex flex-1 flex-col horizontal-scroll-container w-full 

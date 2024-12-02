@@ -1,19 +1,32 @@
 import fields from "./constants/fields";
 import oboe from 'oboe';
-
-export const streamMessages_OBOE = async (message, setMessages, setCurrentMessage, setLoading) => {
+import config from "../../config/config.js"
+export const streamMessages_OBOE = async (message, setMessages, setCurrentMessage, setLoading, auth, currentConversation) => {
   try {
+    const requestBody = {
+      ...message,
+      conversation_id: currentConversation
+    }
     setLoading(true)
-    oboe({
-      url: '/chat',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json-stream',
-      },
-      body: JSON.stringify(message),
-      withCredentials: true
-    })
+    let oboe_config = {
+        url: auth?.user ? `${config.api_url}/chat-protected` : `${config.api_url}/chat`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json-stream',
+        },
+        body: JSON.stringify(requestBody),
+        withCredentials: true,
+        data: {
+            conversation_id: currentConversation
+        }
+    }
+
+    if (auth?.user?.access_token) {
+        oboe_config.headers.Authorization = `Bearer ${auth.user.access_token}`
+    }
+
+    oboe(oboe_config)
     .node('!.*', function(message) {
       if (message && message.type) {
         switch (message.type) {
@@ -69,7 +82,7 @@ export const unescapeString = (str) => {
 
 export const streamMessages_OLD = async (message, setMessages, setCurrentMessage) => {
     try {
-      const response = await fetch('/chat', {
+      const response = await fetch('http://localhost:8989/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -229,7 +242,7 @@ export const streamMessages_OLD = async (message, setMessages, setCurrentMessage
   };
 
 export const streamMessages = async (message) => {
-    const response = await fetch('/chat', {
+    const response = await fetch('http://localhost:8989/chat', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

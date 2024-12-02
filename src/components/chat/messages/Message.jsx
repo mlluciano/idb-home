@@ -9,9 +9,11 @@ const Message = ({
                      activeIndex,
                      setActiveIndex,
                      handleArtifactClick,
-                 }) => {
+ }) => {
     switch (message.type) {
         case 'user_chat_message':
+            return <TextMessage message={message} isUserMessage={true} />;
+        case 'user_text_message':
             return <TextMessage message={message} isUserMessage={true} />;
         case 'ai_text_message':
             return <TextMessage message={message} isUserMessage={false} />;

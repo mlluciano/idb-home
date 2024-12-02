@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Form, TextArea, Loader, Segment} from "semantic-ui-react";
+import {Form, TextArea, Loader} from "semantic-ui-react";
 import Message from "./Message.jsx";
 
 const Messages = ({
@@ -14,10 +14,8 @@ const Messages = ({
                       setIsVisible,
                       loading,
                       messagesEndRef
-                  }) => {
-
+ }) => {
     const [activeIndex, setActiveIndex] = useState();
-
     const divRef = useRef(null);
 
     useEffect(() => {
@@ -41,7 +39,7 @@ const Messages = ({
         <div
             ref={divRef}
             id="messages"
-            className="relative flex flex-col flex-1 justify-start items-center text-white max-w-5xl"
+            className="relative flex flex-col flex-1 justify-start items-center text-white max-w-5xl "
         >
             <div id="sui"
                 className="flex flex-col flex-1 w-full gap-5 bg-zinc-700 border-zinc-600 border p-5 rounded border-box">

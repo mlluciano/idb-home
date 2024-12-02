@@ -21,7 +21,15 @@ const options = [
     }
 ]
 
-const Menu = ({newChatModalOpen, setNewChatModalOpen, clear, setMessages, setLoading, openChat, setOpenChat}) => {
+const Menu = ({
+                  newChatModalOpen,
+                  setNewChatModalOpen,
+                  clear,
+                  setMessages,
+                  setLoading,
+                  openChat,
+                  setOpenChat
+ }) => {
     const [input, setInput] = useState('')
 
     const handleCLick = (option) => {
@@ -57,8 +65,8 @@ const Menu = ({newChatModalOpen, setNewChatModalOpen, clear, setMessages, setLoa
     }
 
     return (
-        <div id="sui" className='flex justify-end p-5 gap-5'>
-            <div className="flex fixed top-0 right-0 gap-5 p-5">
+        <div id="sui" className='flex justify-end'>
+            <div className="flex top-0 right-0 ">
             {options.map((icon, index) => (
                 <Popup
                     trigger={
