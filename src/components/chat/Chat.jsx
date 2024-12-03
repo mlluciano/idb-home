@@ -264,8 +264,6 @@ const Home = ({currentInput, setCurrentInput, handleSubmit}) => {
 
     return (
         <div id='sui' className='flex flex-col justify-center items-center w-full'>
-            <Header as='h1' className='text-zinc-200'>Good afternoon, {auth?.user?.profile?.given_name ? auth?.user?.profile?.given_name : 'Researcher'}</Header>
-
             <div id='sui' className='flex w-1/2 justify-center max-w-screen-md'>
                 <Form className='flex w-full'>
                     <TextArea
