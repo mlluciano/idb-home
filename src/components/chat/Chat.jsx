@@ -370,10 +370,10 @@ const Sidebar = ({
                         <button
                             key={index}
                             className="w-full flex items-center gap-3 px-2 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-150 ease-in-out"
-                            onClick={() => getChat(item)}
+                            onClick={() => getChat(item.id)}
                         >
 
-                            <span className="text-sm font-medium">{item}</span>
+                            <span className="text-sm font-medium">{item.title}</span>
                         </button>
                     ))}
                 </nav>
