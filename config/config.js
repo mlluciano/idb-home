@@ -20,17 +20,19 @@ const config = {
 
 }
 
-if (config.environment === 'development') {
+if (config.environment === 'production') {
+    Object.assign(config, {
+        api_url: 'https://chat.acis.ufl.edu'
+    })
+}
+
+else {
     Object.assign(config, {
         api_url: 'http://localhost:8989',
     })
 }
 
-else if (config.environment === 'production') {
-    Object.assign(config, {
-        api_url: 'https://chat.acis.ufl.edu'
-    })
-}
+
 
 
 
