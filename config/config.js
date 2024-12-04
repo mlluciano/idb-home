@@ -7,8 +7,8 @@ const config = {
     oidc_config: {
         authority: 'http://auth.acis.ufl.edu/realms/iDigBio/',
         client_id: 'chat',
-        redirect_uri: 'http://localhost:5173/*',
-        post_logout_redirect_uri: 'http://localhost:5173/*',
+        redirect_uri: 'https://chat.acis.ufl.edu/*',
+        post_logout_redirect_uri: 'https://chat.acis.ufl.edu/*',
         skipSigninCallback: false,
         disablePKCE: false,
         automaticSilentRenew: true,
@@ -31,10 +31,5 @@ else {
         api_url: 'http://localhost:8989',
     })
 }
-
-
-
-
-
 
 export default config;
