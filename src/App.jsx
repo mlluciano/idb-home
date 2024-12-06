@@ -25,7 +25,11 @@ const App = () => {
     console.log(auth?.isAuthenticated)
 
     const signInCallback = async () => {
-
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+         )
     }
 
     const removeUserCallback = async () => {
