@@ -72,19 +72,25 @@ const Chat = () => {
         scrollToBottom()
     }, [messages])
 
+    const submit = (message) => {
+        setLoading(true)
+        streamMessages_OBOE(message, setMessages, setCurrentMessage, setLoading, auth, currentConversation)
+    }
+
     const handleSubmit = () => {
         if (currentInput!== '' ) {
-            setLoading(true)
             if (!openChat) {
                 setOpenChat(true)
             }
+
             const user_message = {
                 type: "user_chat_message",
                 value: currentInput
             }
+
             setCurrentInput('')
             setMessages(prevMessages => [...prevMessages, user_message]);
-            streamMessages_OBOE(user_message, setMessages, setCurrentMessage, setLoading, auth, currentConversation)
+            submit(user_message)
         }
     }
 
@@ -94,20 +100,10 @@ const Chat = () => {
             value: "clear"
         }
 
-        const response = await fetch(`${config.api_url}/chat`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json-stream',
-                // 'Authorization': `Bearer ${auth.user.access_token}`
-            },
-            body: JSON.stringify(clear_chat_on_server),
-            credentials: "include"
-        });
-
-        if (!response.ok) {
-            console.log(response.status)
-        }
+        setCurrentConversation(crypto.randomUUID())
+        setCurrentInput('')
+        setMessages(prevMessages => []);
+        submit(clear_chat_on_server)
     }
 
     useEffect(() => {
