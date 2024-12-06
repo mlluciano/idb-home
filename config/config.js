@@ -5,7 +5,7 @@ const config = {
     environment: import.meta.env.VITE_APP_ENV,
 
     oidc_config: {
-        authority: 'http://auth.acis.ufl.edu/realms/iDigBio/',
+        authority: 'https://auth.acis.ufl.edu/realms/iDigBio/',
         client_id: 'chat',
         redirect_uri: 'https://chat.acis.ufl.edu/*',
         post_logout_redirect_uri: 'https://chat.acis.ufl.edu/*',
