@@ -7,7 +7,7 @@ export const streamMessages_OBOE = async (message, setMessages, setCurrentMessag
       ...message,
       conversation_id: currentConversation
     }
-    setLoading(true)
+    
     let oboe_config = {
         url: auth?.user ? `${config.api_url}/chat-protected` : `${config.api_url}/chat`,
         method: 'POST',
