@@ -94,21 +94,21 @@ const Chat = () => {
         }
     }
 
-    async function clear() {
-        const clear_chat_on_server = {
+    async function start_over() {
+        const start_over = {
             type: "user_chat_message",
-            value: "clear"
+            value: ""
         }
 
         setCurrentConversation(crypto.randomUUID())
         setCurrentInput('')
         setMessages(prevMessages => []);
-        submit(clear_chat_on_server)
+        submit(start_over)
     }
 
     useEffect(() => {
         document.title = "Chat";
-        clear()
+        start_over()
     }, [])
 
     useEffect(() => {
@@ -217,7 +217,7 @@ const Chat = () => {
                     <Sidebar className='relative' conversations={conversations} setMessages={setMessages}
                              sidebarHidden={sidebarHidden} setSidebarHidden={setSidebarHidden}
                              setLoading={setLoading} openChat={openChat} setOpenChat={setOpenChat}
-                             setCurrentConversation={setCurrentConversation} clear={clear} newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen}
+                             setCurrentConversation={setCurrentConversation} clear={start_over} newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen}
                     />
 
                 </div>
