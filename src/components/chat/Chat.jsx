@@ -316,7 +316,7 @@ const Sidebar = ({
     async function selectChat (conversation_id){
         const API_URL = `${config.api_url}/api/get-conversation`;
         const response = await axios.post(`${API_URL}`, {conversation_id: conversation_id}, {
-            headers: {Authorization: `Bearer ${auth?.user?.access_token}`}
+            headers: {"Authorization": `Bearer ${auth?.user?.access_token}`}
         })
 
         if (response) {
