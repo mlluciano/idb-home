@@ -20,7 +20,7 @@ const Chat = () => {
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState({type: '', value: ''});
     const [currentInput, setCurrentInput] = useState('')
-    const [openChat, setOpenChat] = useState(false)
+    const [openChat, setOpenChat] = useState(true)
     const [maps, setMaps] = useState([])
     const [isVisible, setIsVisible] = useState(false);
     const [artifactOpen, setArtifactOpen] = useState(false);
@@ -30,7 +30,7 @@ const Chat = () => {
     const [conversations, setConversations] = useState([])
     const [newChatModalOpen, setNewChatModalOpen] = useState(false)
     const messagesEndRef = useRef(null);
-    const [sidebarHidden, setSidebarHidden] = useState(false)
+    const [sidebarHidden, setSidebarHidden] = useState(true)
     const [currentConversation, setCurrentConversation] = useState('')
 
     const API_URL = config.api_url;
