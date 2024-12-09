@@ -22,7 +22,7 @@ const config = {
 
 if (config.environment === 'production') {
     Object.assign(config, {
-        api_url: 'https://chat.acis.ufl.edu'
+        api_url: ""
     })
 }
 
