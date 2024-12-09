@@ -22,13 +22,13 @@ const config = {
 
 if (config.environment === 'production') {
     Object.assign(config, {
-        api_url: ""
+        api_url: "/api"
     })
 }
 
 else {
     Object.assign(config, {
-        api_url: 'http://localhost:8989',
+        api_url: 'http://localhost:8989/',
     })
 }
 

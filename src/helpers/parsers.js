@@ -9,7 +9,7 @@ export const streamMessages_OBOE = async (message, setMessages, setCurrentMessag
     }
     
     let oboe_config = {
-        url: auth?.user ? `${config.api_url}/api/chat-protected` : `${config.api_url}/api/chat`,
+        url: auth?.user ? `${config.api_url}/chat-protected` : `${config.api_url}/chat`,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ export const unescapeString = (str) => {
 
 export const streamMessages_OLD = async (message, setMessages, setCurrentMessage) => {
     try {
-      const response = await fetch(`${config.api_url}/api/chat`, {
+      const response = await fetch(`${config.api_url}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -242,7 +242,7 @@ export const streamMessages_OLD = async (message, setMessages, setCurrentMessage
   };
 
 export const streamMessages = async (message) => {
-    const response = await fetch(`${config.api_url}/api/chat`, {
+    const response = await fetch(`${config.api_url}/chat`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

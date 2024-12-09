@@ -37,7 +37,7 @@ const Chat = () => {
     axios.defaults.withCredentials = true;
 
     async function fetchConversations() {
-        const response = await axios.post(`${API_URL}/api/conversations`, {}, {
+        const response = await axios.post(`${API_URL}/conversations`, {}, {
             headers: {Authorization: `Bearer ${auth?.user?.access_token}`}
         })
         if (response) {
@@ -314,7 +314,7 @@ const Sidebar = ({
     ];
 
     async function selectChat (conversation_id){
-        const API_URL = `${config.api_url}/api/get-conversation`;
+        const API_URL = `${config.api_url}/get-conversation`;
         const response = await axios.post(`${API_URL}`, {conversation_id: conversation_id}, {
             headers: {"Authorization": `Bearer ${auth?.user?.access_token}`}
         })
