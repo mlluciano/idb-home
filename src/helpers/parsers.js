@@ -82,7 +82,7 @@ export const unescapeString = (str) => {
 
 export const streamMessages_OLD = async (message, setMessages, setCurrentMessage) => {
     try {
-      const response = await fetch('http://localhost:8989/chat', {
+      const response = await fetch(`${config.api_url}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -242,7 +242,7 @@ export const streamMessages_OLD = async (message, setMessages, setCurrentMessage
   };
 
 export const streamMessages = async (message) => {
-    const response = await fetch('http://localhost:8989/chat', {
+    const response = await fetch(`${config.api_url}/chat`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

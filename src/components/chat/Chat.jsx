@@ -20,7 +20,7 @@ const Chat = () => {
     const [messages, setMessages] = useState([])
     const [currentMessage, setCurrentMessage] = useState({type: '', value: ''});
     const [currentInput, setCurrentInput] = useState('')
-    const [openChat, setOpenChat] = useState(false)
+    const [openChat, setOpenChat] = useState(true)
     const [maps, setMaps] = useState([])
     const [isVisible, setIsVisible] = useState(false);
     const [artifactOpen, setArtifactOpen] = useState(false);
@@ -30,14 +30,14 @@ const Chat = () => {
     const [conversations, setConversations] = useState([])
     const [newChatModalOpen, setNewChatModalOpen] = useState(false)
     const messagesEndRef = useRef(null);
-    const [sidebarHidden, setSidebarHidden] = useState(false)
+    const [sidebarHidden, setSidebarHidden] = useState(true)
     const [currentConversation, setCurrentConversation] = useState('')
 
     const API_URL = config.api_url;
     axios.defaults.withCredentials = true;
 
     async function fetchConversations() {
-        const response = await axios.post(`${API_URL}/api/conversations`, {}, {
+        const response = await axios.post(`${API_URL}/conversations`, {}, {
             headers: {Authorization: `Bearer ${auth?.user?.access_token}`}
         })
         if (response) {
@@ -94,21 +94,21 @@ const Chat = () => {
         }
     }
 
-    async function clear() {
-        const clear_chat_on_server = {
+    async function start_over() {
+        const start_over = {
             type: "user_chat_message",
-            value: "clear"
+            value: ""
         }
 
         setCurrentConversation(crypto.randomUUID())
         setCurrentInput('')
         setMessages(prevMessages => []);
-        submit(clear_chat_on_server)
+        submit(start_over)
     }
 
     useEffect(() => {
         document.title = "Chat";
-        clear()
+        start_over()
     }, [])
 
     useEffect(() => {
@@ -217,7 +217,7 @@ const Chat = () => {
                     <Sidebar className='relative' conversations={conversations} setMessages={setMessages}
                              sidebarHidden={sidebarHidden} setSidebarHidden={setSidebarHidden}
                              setLoading={setLoading} openChat={openChat} setOpenChat={setOpenChat}
-                             setCurrentConversation={setCurrentConversation} clear={clear} newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen}
+                             setCurrentConversation={setCurrentConversation} clear={start_over} newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen}
                     />
 
                 </div>
@@ -314,9 +314,9 @@ const Sidebar = ({
     ];
 
     async function selectChat (conversation_id){
-        const API_URL = `${config.api_url}/api/get-conversation`;
+        const API_URL = `${config.api_url}/get-conversation`;
         const response = await axios.post(`${API_URL}`, {conversation_id: conversation_id}, {
-            headers: {Authorization: `Bearer ${auth?.user?.access_token}`}
+            headers: {"Authorization": `Bearer ${auth?.user?.access_token}`}
         })
 
         if (response) {
