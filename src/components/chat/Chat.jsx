@@ -216,7 +216,7 @@ const Chat = () => {
                 <div className='flex flex-1 max-w-[70px]'>
                     <Sidebar className='relative' conversations={conversations} setMessages={setMessages}
                              sidebarHidden={sidebarHidden} setSidebarHidden={setSidebarHidden}
-                             setLoading={setLoading} openChat={openChat} setOpenChat={setOpenChat}
+                             setLoading={setLoading} openChat={openChat} setOpenChat={setOpenChat} currentConversation={currentConversation}
                              setCurrentConversation={setCurrentConversation} clear={start_over} newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen}
                     />
 
@@ -291,6 +291,7 @@ const Sidebar = ({
                      setLoading,
                      openChat,
                      setOpenChat,
+                     currentConversation,
                      setCurrentConversation,
                      clear,
                      newChatModalOpen,
@@ -352,7 +353,7 @@ const Sidebar = ({
                     clear={clear}
                     setMessages={setMessages} setLoading={setLoading}
                     newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen}
-                    openChat={openChat} setOpenChat={setOpenChat}
+                    openChat={openChat} setOpenChat={setOpenChat} currentConversation={currentConversation} setCurrentConversation={setCurrentConversation}
                 />
 
             </div>

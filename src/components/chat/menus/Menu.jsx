@@ -29,7 +29,9 @@ const Menu = ({
                   setMessages,
                   setLoading,
                   openChat,
-                  setOpenChat
+                  setOpenChat,
+                  currentConversation,
+                  setCurrentConversation,
  }) => {
     const [input, setInput] = useState('')
     const auth = useAuth()
@@ -50,6 +52,8 @@ const Menu = ({
 
     const startNewChat = () => {
         if (input!== '' ) {
+            let new_uuid = crypto.randomUUID()
+
             const user_message = {
                 type: "user_chat_message",
                 value: input
@@ -62,7 +66,8 @@ const Menu = ({
                 setOpenChat(true)
             }
             setInput('')
-            streamMessages_OBOE(user_message, setMessages, setInput, setLoading, auth)
+            streamMessages_OBOE(user_message, setMessages, setInput, setLoading, auth, new_uuid)
+            setCurrentConversation(new_uuid)
         }
     }
 
