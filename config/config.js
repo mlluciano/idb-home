@@ -28,7 +28,7 @@ if (config.environment === 'production') {
 
 else {
     Object.assign(config, {
-        api_url: 'http://localhost:8989/',
+        api_url: '/api',
     })
 }
 
