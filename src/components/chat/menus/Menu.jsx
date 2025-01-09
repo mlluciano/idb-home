@@ -2,6 +2,7 @@ import {Icon, IconGroup, Popup} from "semantic-ui-react";
 import React, {useState} from "react";
 import {streamMessages_OBOE} from "../../../helpers/parsers.js";
 import NewChatModal from "./NewChatModal.jsx";
+import {useAuth} from "react-oidc-context";
 
 const options = [
     // {
@@ -31,6 +32,7 @@ const Menu = ({
                   setOpenChat
  }) => {
     const [input, setInput] = useState('')
+    const auth = useAuth()
 
     const handleCLick = (option) => {
         switch (option) {
@@ -60,7 +62,7 @@ const Menu = ({
                 setOpenChat(true)
             }
             setInput('')
-            streamMessages_OBOE(user_message, setMessages, setInput, setLoading)
+            streamMessages_OBOE(user_message, setMessages, setInput, setLoading, auth)
         }
     }
 
