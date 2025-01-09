@@ -28,7 +28,7 @@ const App = () => {
         window.history.replaceState(
             {},
             document.title,
-            window.location.pathname
+            window.location.origin
          )
     }
 
