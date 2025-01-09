@@ -14,6 +14,8 @@ import { useAuth } from "react-oidc-context";
 import { Log } from 'oidc-client-ts';
 import axios from "axios";
 import config from '../../../config/config.js'
+import chat_logo from '../../assets/chat_logo.png'
+
 Log.setLogger(console);
 
 const Chat = () => {
@@ -144,7 +146,7 @@ const Chat = () => {
         <div className='flex flex-col flex-1 w-full bg-zinc-800 min-h-screen overflow-hidden'>
 
             <div className='flex flex-0'>
-                <img className='fixed top-0 left-0' src="src/assets/chat_logo.png" alt="iDigBio" border="0" id="logo"
+                <img className='fixed top-0 left-0' src={chat_logo} alt="iDigBio" border="0" id="logo"
                      style={{width: '75px', height: '75px'}}></img>
             </div>
 
