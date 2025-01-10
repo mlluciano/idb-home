@@ -3,7 +3,7 @@ import {
     Form,
     TextArea,
     Header,
-    Icon, Popup
+    Icon, Popup, Button
 } from 'semantic-ui-react';
 import '../../css/chat.css'
 import {streamMessages_OBOE} from '../../helpers/parsers'
@@ -159,20 +159,6 @@ const Chat = () => {
                      style={{width: '75px', height: '75px'}}></img>
             </div>
 
-            <div className='flex justify-end p-4 text-white'>
-                {!auth.isAuthenticated
-                    ?
-                    <button onClick={() => void auth.signinRedirect()}>Log in</button>
-                    :
-                    <button onClick={() => {
-                        void auth.removeUser()
-                        void auth.signoutRedirect()
-                    }}>Log out
-                    </button>
-                }
-            </div>
-
-
             <div
                 className={`flex flex-1 justify-center items-start gap-20 p-10 pt-20 pl-20 ${!sidebarHidden ? 'pl-[225px]' : 'pl-[75px]'} `}>
                 <div className="flex flex-1 justify-center">
@@ -203,27 +189,6 @@ const Chat = () => {
 
             </div>
 
-            {sidebarHidden  ?
-                <Popup
-                    trigger={
-                        <button id='sui' className='fixed top-20 left-0 text-white ml-2' onClick={() => {
-                            setSidebarHidden(false)
-                        }}>
-                            <Icon size='large' color='white' name={'chevron circle right'}/>
-                        </button>
-                    }
-                    content={'Open sidebar'}
-                    style={{
-                        backgroundColor: 'black',
-                        color: 'white',
-                        padding: '5px',
-                        marginTop: '5px',
-                        fontSize: '12px'
-                    }}
-                    position="bottom right"
-                />
-
-                :
                 <div className='flex flex-1 max-w-[70px]'>
                     <Sidebar className='relative' conversations={conversations} setMessages={setMessages}
                              sidebarHidden={sidebarHidden} setSidebarHidden={setSidebarHidden}
@@ -232,7 +197,7 @@ const Chat = () => {
                     />
 
                 </div>
-            }
+            {/*}*/}
 
         </div>
 
@@ -309,6 +274,20 @@ const Sidebar = ({
                      setNewChatModalOpen
  }) => {
     const auth = useAuth()
+    const [isHovered, setIsHovered] = useState(false);
+    const [isPinned, setIsPinned] = useState(false);
+
+    const handleMouseEnter = () => {
+        if (!isPinned) {
+            setIsHovered(true);
+        }
+    };
+
+    const handleMouseLeave = () => {
+        if (!isPinned) {
+            setIsHovered(false);
+        }
+    };
 
     const menuItems = [
         { id: 1, label: 'Dashboard', icon: '📊' },
@@ -351,43 +330,94 @@ const Sidebar = ({
     }
 
     return (
-        <div className="fixed top-0 left-0 h-screen w-64 bg-black text-white shadow-lg">
+        <div
+            className="fixed top-0 left-0 h-screen flex "
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
+            {/* Hover trigger area */}
+            {!isPinned && <div className="w-16 h-full bg-transparent z-10"/>}
 
-            <div className="flex justify-between px-6 py-4 border-b border-gray-700">
-                <button id="sui" onClick={() => {
-                    setSidebarHidden(true)
-                }}>
-                    <Icon size='large' className='' name={'chevron circle left'}  />
-                </button>
+            <div
+                className={`fixed top-0 left-0 h-screen w-64 bg-black/80 text-white shadow-lg transition-transform duration-300 ease-in-out ${
+                    isHovered || isPinned ? 'translate-x-0' : '-translate-x-64'
+                }`}>
 
-                <Menu
-                    clear={clear}
-                    setMessages={setMessages} setLoading={setLoading}
-                    newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen}
-                    openChat={openChat} setOpenChat={setOpenChat} currentConversation={currentConversation} setCurrentConversation={setCurrentConversation}
-                />
+                <div className="flex justify-between px-6 py-6 border-b border-gray-700">
+                    <div className='flex flex-0'>
+                        <img className='fixed top-0 left-0' src={chat_logo} alt="iDigBio" border="0" id="logo"
+                             style={{width: '75px', height: '75px'}}></img>
+                    </div>
 
-            </div>
-
-            {/* Scrollable Menu Section */}
-            <div className="h-[calc(100vh-64px)] overflow-y-auto">
-                <nav className="px-4 py-2">
-                    {conversations?.history?.map((item, index) => (
+                    <div id={"sui"} className="flex flex-col items-center gap-4">
+                        {/* Pin Button */}
                         <button
-                            key={index}
-                            className="w-full flex items-center gap-3 px-2 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-150 ease-in-out"
-                            onClick={() => getChat(item.id)}
+                            onClick={() => setIsPinned(!isPinned)}
+                            className=" hover:bg-gray-700 rounded-lg transition-colors"
+                            title={isPinned ? "Unpin sidebar" : "Pin sidebar"}
                         >
+                            {isPinned ?
+                                <Icon name="chevron left"/>
+                            :
+                                <Icon name="chevron right"/>
+                            }
 
-                            <span className="text-sm font-medium">{item.title}</span>
                         </button>
-                    ))}
-                </nav>
+
+                        <Menu
+                            clear={clear}
+                            setMessages={setMessages}
+                            setLoading={setLoading}
+                            newChatModalOpen={newChatModalOpen}
+                            setNewChatModalOpen={setNewChatModalOpen}
+                            openChat={openChat}
+                            setOpenChat={setOpenChat}
+                            currentConversation={currentConversation}
+                            setCurrentConversation={setCurrentConversation}
+                        />
+                    </div>
+
+                </div>
+
+                <div className="flex flex-col h-[calc(100%-100px)]">
+                    {/* Scrollable Menu Section */}
+                    <div className="flex-1 overflow-y-auto">
+                        <nav className="px-4 py-2">
+                            {conversations?.history?.map((item, index) => (
+                                <button
+                                    key={index}
+                                    className="w-full flex items-center gap-3 px-2 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-150 ease-in-out"
+                                    onClick={() => getChat(item.id)}
+                                >
+                                    <span className="text-sm font-medium">{item.title}</span>
+                                </button>
+                            ))}
+                        </nav>
+                    </div>
+
+                    <div id="this-one"
+                         className="flex flex-col justify-center items-center flex-shrink-0 w-full py-9 border-t border-gray-700">
+                        {auth.user ?
+                            <div id="sui" className="flex flex-col text-left">
+                                <span className="text-gray-400">{auth.user.profile.email}</span>
+                                <Button onClick={() => {
+                                    void auth.removeUser()
+                                    void auth.signoutRedirect()
+                                }} className='mt-2'>Sign out</Button>
+                            </div>
+                            :
+                            <div id="sui" className="flex flex-col text-left">
+                                <span>You are not signed in.</span>
+                                <Button onClick={() => void auth.signinRedirect()} className='mt-2'>Sign in</Button>
+                            </div>
+                        }
+                    </div>
+
+                </div>
             </div>
         </div>
     );
 };
-
 
 
 export default Chat;

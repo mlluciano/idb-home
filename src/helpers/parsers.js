@@ -32,7 +32,7 @@ export const streamMessages_OBOE = async (message, setMessages, setCurrentMessag
         switch (message.type) {
           case 'ai_text_message':
             if (message.value && message.value.trim()) {
-              setCurrentMessage({});
+              setCurrentMessage(undefined);
                 setMessages(prevMessages => {
                     if (isFreshStart && prevMessages.length === 1) { // there are 2 initial messages on startup - this prevents duplicates due to re-rendering logic
                         if (message==="Before we can chat, please confirm you are a real person by telling me \"I am not a robot\".") {
