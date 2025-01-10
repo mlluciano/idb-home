@@ -1,10 +1,9 @@
 import {WebStorageStateStore} from "oidc-client-ts";
 
+const env = import.meta.env.VITE_APP_ENV ? import.meta.env.VITE_APP_ENV : "development";
 
-const config = {
-    environment: import.meta.env.VITE_APP_ENV,
-
-    oidc_config: {
+const OIDC_CONFIGS = {
+    production: {
         authority: 'https://auth.acis.ufl.edu/realms/iDigBio/',
         client_id: 'chat',
         redirect_uri: 'https://chat.acis.ufl.edu/',
@@ -17,19 +16,31 @@ const config = {
         loadUserInfo: true,
         monitorSession: true,
     },
-
+    development: {
+        authority: 'https://auth.acis.ufl.edu/realms/iDigBio/',
+        client_id: 'chat-dev',
+        redirect_uri: 'http://localhost:5173/',
+        post_logout_redirect_uri: 'http://localhost:5173/',
+        skipSigninCallback: false,
+        disablePKCE: false,
+        automaticSilentRenew: true,
+        scope: 'openid profile email',
+        userStore: new WebStorageStateStore({"prefix": 'KC-dev.', "store": window.localStorage}),
+        loadUserInfo: true,
+        monitorSession: true,
+    }
 }
 
-if (config.environment === 'production') {
-    Object.assign(config, {
-        api_url: "/api"
-    })
+const API_URLS = {
+    production: '/api',
+    development: 'http://localhost:8989',
 }
 
-else {
-    Object.assign(config, {
-        api_url: '/api',
-    })
+const config = {
+    environment: env,
+    oidc_config: OIDC_CONFIGS[env],
+    api_url: API_URLS[env],
 }
+
 
 export default config;
