@@ -97,15 +97,24 @@ const Chat = () => {
     }
 
     async function start_over() {
-        const start_over = {
-            type: "user_chat_message",
-            value: ""
-        }
+        if (messages.length === 0) {
+            const start_over = {
+                type: "user_chat_message",
+                value: ""
+            }
 
-        setCurrentConversation(crypto.randomUUID())
-        setCurrentInput('')
-        setMessages(prevMessages => []);
-        submit(start_over)
+            setMessages([])
+            setCurrentConversation(crypto.randomUUID());
+            setCurrentInput('');
+
+            // Set a flag in message to indicate this is a fresh start
+            const fresh_start = {
+                ...start_over,
+                fresh_start: true
+            }
+
+            submit(fresh_start)
+        }
     }
 
     useEffect(() => {

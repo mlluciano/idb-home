@@ -58,7 +58,7 @@ const Menu = ({
                 type: "user_chat_message",
                 value: input
             }
-            clear()
+            clear() // start_over() in Chat.jsx
             setMessages([user_message])
             setNewChatModalOpen(false)
             setLoading(true)
@@ -91,6 +91,7 @@ const Menu = ({
                 setNewChatModalOpen={setNewChatModalOpen}
                 input={input} setInput={setInput}
                 startNewChat={startNewChat}
+                setMessages={setMessages}
             />
 
         </div>

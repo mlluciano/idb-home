@@ -25,7 +25,7 @@ export const streamMessages_OBOE = async (message, setMessages, setCurrentMessag
     if (auth?.user?.access_token) {
         oboe_config.headers.Authorization = `Bearer ${auth.user.access_token}`
     }
-
+    const isFreshStart = message.fresh_start;
     oboe(oboe_config)
     .node('!.*', function(message) {
       if (message && message.type) {
@@ -33,7 +33,16 @@ export const streamMessages_OBOE = async (message, setMessages, setCurrentMessag
           case 'ai_text_message':
             if (message.value && message.value.trim()) {
               setCurrentMessage({});
-              setMessages(prevMessages => [...prevMessages, message]);
+                setMessages(prevMessages => {
+                    if (isFreshStart && prevMessages.length === 1) { // there are 2 initial messages on startup - this prevents duplicates due to re-rendering logic
+                        if (message==="Before we can chat, please confirm you are a real person by telling me \"I am not a robot\".") {
+                            return [...prevMessages, message];
+                        } else {
+                            return [...prevMessages];
+                        }
+                    }
+                    return [...prevMessages, message];
+                });
             }
             break;
           case 'ai_processing_message':

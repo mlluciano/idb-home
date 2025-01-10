@@ -2,7 +2,7 @@ import {Header, Modal, ModalContent, TextArea} from "semantic-ui-react";
 import React from "react";
 
 
-const NewChatModal = ({newChatModalOpen, setNewChatModalOpen, startNewChat, input, setInput}) => {
+const NewChatModal = ({newChatModalOpen, setNewChatModalOpen, startNewChat, input, setInput, setMessages}) => {
     return (
         <Modal
             id="sui"
@@ -21,6 +21,7 @@ const NewChatModal = ({newChatModalOpen, setNewChatModalOpen, startNewChat, inpu
                     onKeyDown={(e) => {
                         if (e.keyCode === 13 && !e.shiftKey) {
                             e.preventDefault();
+                            setMessages([])
                             startNewChat();
                         }
                     }}
