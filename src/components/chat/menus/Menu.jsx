@@ -5,14 +5,6 @@ import NewChatModal from "./NewChatModal.jsx";
 import {useAuth} from "react-oidc-context";
 
 const options = [
-    // {
-    //     trigger: <Icon link size='large' color='grey' name='star'/>,
-    //     content: "Save this chat"
-    // },
-    // {
-    //     trigger:  <Icon link size='large' color='grey' name='sliders horizontal'/>,
-    //     content: "Chat preferences"
-    // },
     {
         trigger: <IconGroup size='large'>
                     <Icon inverted link color='orange' name='chat'/>
@@ -73,19 +65,6 @@ const Menu = ({
 
     return (
         <div id="sui" className='flex justify-end'>
-            <div className="flex top-0 right-0 ">
-            {options.map((icon, index) => (
-                <Popup
-                    trigger={
-                        <button onClick={() => handleCLick(icon.content)}>{icon.trigger}</button>
-                    }
-                    content={icon.content}
-                    style={{backgroundColor: 'black', color: 'white', padding: '5px', marginTop: '5px', fontSize: '12px'}}
-                    position="bottom right"
-                />
-            ))}
-            </div>
-
             <NewChatModal
                 newChatModalOpen={newChatModalOpen}
                 setNewChatModalOpen={setNewChatModalOpen}
@@ -93,7 +72,6 @@ const Menu = ({
                 startNewChat={startNewChat}
                 setMessages={setMessages}
             />
-
         </div>
     )
 }

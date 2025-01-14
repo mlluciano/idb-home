@@ -159,8 +159,7 @@ const Chat = () => {
                      style={{width: '75px', height: '75px'}}></img>
             </div>
 
-            <div
-                className={`flex flex-1 justify-center items-start gap-20 p-10 pt-20 pl-20 ${!sidebarHidden ? 'pl-[225px]' : 'pl-[75px]'} `}>
+            <div className={`flex flex-1 justify-center items-start gap-20 p-10 pt-20 pl-20 `}>
                 <div className="flex flex-1 justify-center">
                 {messages.length > 0
                         ? <Messages messages={messages} currentMessage={currentMessage}
@@ -185,19 +184,15 @@ const Chat = () => {
                                   setActiveArtifactIndex={setActiveArtifactIndex}/>
                     </div>
                 }
-
-
             </div>
 
-                <div className='flex flex-1 max-w-[70px]'>
-                    <Sidebar className='relative' conversations={conversations} setMessages={setMessages}
-                             sidebarHidden={sidebarHidden} setSidebarHidden={setSidebarHidden}
-                             setLoading={setLoading} openChat={openChat} setOpenChat={setOpenChat} currentConversation={currentConversation}
-                             setCurrentConversation={setCurrentConversation} clear={start_over} newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen}
-                    />
-
-                </div>
-            {/*}*/}
+            <div className='flex flex-1 max-w-[70px]'>
+                <Sidebar className='relative' conversations={conversations} setMessages={setMessages}
+                         sidebarHidden={sidebarHidden} setSidebarHidden={setSidebarHidden}
+                         setLoading={setLoading} openChat={openChat} setOpenChat={setOpenChat} currentConversation={currentConversation}
+                         setCurrentConversation={setCurrentConversation} clear={start_over} newChatModalOpen={newChatModalOpen} setNewChatModalOpen={setNewChatModalOpen}
+                />
+            </div>
 
         </div>
 
@@ -343,17 +338,17 @@ const Sidebar = ({
                     isHovered || isPinned ? 'translate-x-0' : '-translate-x-64'
                 }`}>
 
-                <div className="flex justify-between px-6 py-6 border-b border-gray-700">
-                    <div className='flex flex-0'>
+                <div className="flex justify-between px-2 py-6 border-b border-gray-700">
+                    <div className='flex flex-0 mb-8'>
                         <img className='fixed top-0 left-0' src={chat_logo} alt="iDigBio" border="0" id="logo"
                              style={{width: '75px', height: '75px'}}></img>
                     </div>
 
-                    <div id={"sui"} className="flex flex-col items-center gap-4">
+                    <div id={"sui"} className="flex flex-col items-center">
                         {/* Pin Button */}
                         <button
                             onClick={() => setIsPinned(!isPinned)}
-                            className=" hover:bg-gray-700 rounded-lg transition-colors"
+                            className=" hover:bg-gray-700 rounded-lg transition-colors w-8 h-8"
                             title={isPinned ? "Unpin sidebar" : "Pin sidebar"}
                         >
                             {isPinned ?
@@ -379,16 +374,30 @@ const Sidebar = ({
 
                 </div>
 
-                <div className="flex flex-col h-[calc(100%-100px)]">
+                <div className="border-b border-gray-700">
+                    <button
+                        id="sui"
+                        className="w-full flex items-center gap-1 px-2 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-150 ease-in-out"
+                        onClick={() => setNewChatModalOpen(true)}
+                    >
+                        <Icon color="white" className="flex items-center" name="plus circle"></Icon>
+                        <span className="text-sm font-medium">Start new chat</span>
+
+                    </button>
+                </div>
+
+                <div className="flex flex-col h-[calc(100%-120px)]">
                     {/* Scrollable Menu Section */}
                     <div className="flex-1 overflow-y-auto">
                         <nav className="px-4 py-2">
                             {conversations?.history?.map((item, index) => (
                                 <button
+                                    id="sui"
                                     key={index}
-                                    className="w-full flex items-center gap-3 px-2 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-150 ease-in-out"
+                                    className="w-full flex items-center px-2 py-3 text-gray-300 hover:bg-gray-700 hover:text-white rounded-lg transition-colors duration-150 ease-in-out"
                                     onClick={() => getChat(item.id)}
                                 >
+                                    <Icon color="white" className="flex items-center" name="chat"></Icon>
                                     <span className="text-sm font-medium">{item.title}</span>
                                 </button>
                             ))}
